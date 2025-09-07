@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arizona Cardinals — News</title>
+  <link rel="manifest" href="static/manifest.webmanifest">
+  <link rel="icon" href="static/favicon.ico">
+  <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="brand">
+      <img src="static/logo.png" alt="Cardinals" class="logo">
+      <div>
+        <h1>Arizona Cardinals — News</h1>
+        <div class="sub">Live team feed • auto‑updates</div>
+      </div>
+    </div>
+  </header>
+
+  <nav id="quick-links" class="pills"></nav>
+
+  <section class="controls">
+    <div class="row">
+      <label for="sourceSel">Source:</label>
+      <select id="sourceSel"><option>All sources</option></select>
+      <div class="updated"><span>Updated:</span> <time id="updated">—</time></div>
+    </div>
+  </section>
+
+  <main id="feed" class="cards"></main>
+
+  <footer class="footer">
+    <a href="https://github.com" target="_blank" rel="noopener">Powered by GitHub Pages</a>
+  </footer>
+
+<script>
+const fmtTime = (ts) => {
+  const d = new Date(ts * 1000);
+  return d.toLocaleString([], {month:'numeric', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit'});
+};
+
+let DATA = null;
+
+async function loadData() {
+  const res = await fetch('items.json?v=' + Date.now(), {cache:'no-store'});
+  DATA = await res.json();
+  document.getElementById('updated').textContent = new Date(DATA.updated_at).toLocaleString();
+  buildSources();
+  buildQuickLinks();
+  render();
+}
+
+function buildQuickLinks() {
+  // populated from window.STATIC_LINKS (injected below by fetch)
+}
+
+function buildSources() {
+  const sel = document.getElementById('sourceSel');
+  sel.innerHTML = '';
+  const optAll = document.createElement('option');
+  optAll.value = '';
+  optAll.textContent = 'All sources';
+  sel.appendChild(optAll);
+  (DATA.sources || []).forEach(s => {
+    const o = document.createElement('option');
+    o.value = s;
+    o.textContent = s;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', render);
+}
+
+function render() {
+  const feed = document.getElementById('feed');
+  feed.innerHTML = '';
+  const selVal = document.getElementById('sourceSel').value;
+  const items = (DATA.items || []).filter(it => !selVal || it.source === selVal);
+  items.forEach(it => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = it.link;
+    card.target = '_blank';
+    card.rel = 'noopener';
+    card.innerHTML = `
+      <h3>${it.title}</h3>
+      <div class="meta">${it.source} • ${fmtTime(it.published)}</div>
+    `;
+    feed.appendChild(card);
+  });
+}
+
+async function loadLinks() {
+  // fetch STATIC_LINKS from feeds.py via a mirrored JSON endpoint (baked in below)
+  const res = await fetch('static/links.json?v=' + Date.now());
+  const links = await res.json();
+  const row = document.getElementById('quick-links');
+  links.forEach(l => {
+    const a = document.createElement('a');
+    a.href = l.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.className = 'pill';
+    a.textContent = l.label;
+    row.appendChild(a);
+  });
+}
+
+loadLinks().then(loadData);
+setInterval(loadData, 5 * 60 * 1000); // refresh every 5 min
+</script>
+</body>
+</html>
