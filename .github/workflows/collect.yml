@@ -8,7 +8,6 @@ on:
     paths:
       - "collect.py"
       - "feeds.py"
-      - "requirements.txt"
 
 jobs:
   collect:
@@ -16,33 +15,24 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-
+          pip install feedparser==6.0.11
       - name: Run collector
         run: |
           python collect.py
           python - <<'PY'
           import json, pathlib
-          p = pathlib.Path("items.json")
-          if not p.exists():
-            raise SystemExit("items.json not found")
-          d = json.loads(p.read_text(encoding="utf-8"))
+          d = json.loads(pathlib.Path("items.json").read_text(encoding="utf-8"))
           print("items:", len(d.get("items", [])))
           print("sources:", len(d.get("sources", [])))
           print("updated_at:", d.get("updated_at"))
 PY
-
       - name: Commit items.json
         run: |
           git config user.name "github-actions"
