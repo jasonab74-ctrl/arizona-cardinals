@@ -4,130 +4,155 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Arizona Cardinals — News</title>
+
+  <!-- Icons / PWA (keep if you already have these files) -->
   <link rel="icon" href="static/favicon.ico">
   <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
   <link rel="manifest" href="static/manifest.webmanifest">
-  <link rel="stylesheet" href="static/style.css">
+  <meta name="theme-color" content="#97233F"/>
+
+  <!-- Minimal built-in styles so this works even if style.css is missing -->
   <style>
     :root{
-      --brand:#97233F; /* Cardinals red */
-      --brand-dark:#6f1b2e;
-      --ink:#e8e8ea;
-      --card:#111416;
-      --chip:#1b1f22;
-      --accent:#ffb612; /* gold beak */
+      --brand:#97233F; --brand2:#ffb612; --bg:#0d1117; --panel:#0f1620;
+      --card:#111a24; --text:#e6edf3; --muted:#9fb0c0; --border:#223548;
     }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);
+      font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    header{display:flex;gap:14px;align-items:center;padding:16px;border-bottom:4px solid var(--brand)}
+    header .logo{width:72px;height:72px;object-fit:contain;background:#0000;border-radius:10px}
+    header h1{margin:0;font-size:28px;line-height:1.05}
+    header .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .wrap{max-width:980px;margin:0 auto;padding:14px}
+    .controls{display:flex;gap:12px;align-items:center;justify-content:space-between;
+      padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--panel)}
+    select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+    #links{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 14px}
+    .pill{display:inline-block;padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .card{display:block;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:12px}
+    .card:hover{outline:2px solid var(--brand)}
+    .title{font-size:18px;font-weight:800;margin:0 0 6px}
+    .meta{color:var(--muted);font-size:13px}
+    .empty{color:var(--muted);padding:14px;border:1px dashed var(--border);border-radius:12px;margin:12px 0}
+    footer{color:var(--muted);text-align:center;padding:18px}
   </style>
 </head>
 <body>
-  <header class="hero">
-    <img class="logo" src="static/logo.png" alt="Cardinals logo" />
-    <div class="title">
-      <h1>Arizona<br>Cardinals —<br>News</h1>
+  <header>
+    <img class="logo" src="static/logo.png" alt="Arizona Cardinals logo">
+    <div>
+      <h1>Arizona Cardinals — News</h1>
       <div class="sub">Live feed • auto-updates</div>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="toolbar">
+  <div class="wrap">
+    <div class="controls">
       <div>
-        <label>Source:</label>
-        <select id="srcSel"><option>All sources</option></select>
+        <label for="src">Source:</label>
+        <select id="src"><option value="">All sources</option></select>
       </div>
-      <div id="updated">Updated: —</div>
-    </section>
+      <div class="meta">Updated: <span id="updated">—</span></div>
+    </div>
 
-    <nav id="links" class="chips"></nav>
+    <!-- Quick link buttons -->
+    <nav id="links"></nav>
 
-    <div id="notice" class="notice" hidden>New items available — tap to refresh</div>
-    <section id="list" class="cards">
-      <div class="empty">No articles yet — the collector will populate shortly.</div>
-    </section>
-  </main>
+    <!-- Articles -->
+    <div id="empty" class="empty" hidden>No articles yet — the collector will populate shortly.</div>
+    <main id="feed" class="grid"></main>
+  </div>
 
-  <footer class="foot">
-    Powered by GitHub Pages
-  </footer>
+  <footer>Powered by GitHub Pages</footer>
 
-  <script>
-  const list = document.getElementById('list');
-  const srcSel = document.getElementById('srcSel');
-  const updated = document.getElementById('updated');
-  const linksBox = document.getElementById('links');
+<script>
+/**
+ * This index is schema-flexible. It supports either:
+ *  - items[].link or items[].url
+ *  - items[].published (epoch seconds) or items[].published_at / published_iso (ISO)
+ *  - data.links for buttons; data.sources for dropdown; data.updated_at ISO
+ */
+const FEED_URL = 'items.json?v=' + Date.now();
 
-  let DATA = null;
+function fmtEpoch(sec){
+  if(!sec && sec !== 0) return null;
+  try{ return new Date(sec*1000).toLocaleString(); }catch(e){ return null; }
+}
+function fmtISO(iso){
+  try{
+    if(!iso) return null;
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? null : d.toLocaleString();
+  }catch(e){ return null; }
+}
+function bestTime(it){
+  // supports: published (epoch) | published_at (ISO) | published_iso (ISO)
+  return fmtEpoch(it.published) || fmtISO(it.published_at) || fmtISO(it.published_iso) || '';
+}
+function bestLink(it){
+  return it.link || it.url || '#';
+}
+function renderLinks(links){
+  const box = document.getElementById('links');
+  box.innerHTML = '';
+  (links||[]).forEach(l=>{
+    const a = document.createElement('a');
+    a.className='pill'; a.href=l.url; a.target='_blank'; a.rel='noopener';
+    a.textContent = l.label; box.appendChild(a);
+  });
+}
+function renderSources(sources){
+  const sel = document.getElementById('src');
+  sel.innerHTML = '<option value="">All sources</option>' + (sources||[]).sort().map(s=>`<option>${s}</option>`).join('');
+}
+function renderItems(items){
+  const grid = document.getElementById('feed');
+  const empty = document.getElementById('empty');
+  const selVal = document.getElementById('src').value;
 
-  function fmtTime(ts){
-    if(!ts) return '';
-    const d = new Date(ts*1000);
-    return d.toLocaleString();
+  const arr = (items||[]).filter(x => !selVal || x.source === selVal);
+  grid.innerHTML = '';
+  if(arr.length === 0){
+    empty.hidden = false;
+    return;
   }
+  empty.hidden = true;
 
-  function render(){
-    if(!DATA) return;
-    // Updated stamp
-    const stamp = new Date(DATA.updated_at);
-    updated.textContent = 'Updated: ' + stamp.toLocaleString();
+  grid.innerHTML = arr.map(it => `
+    <a class="card" href="${bestLink(it)}" target="_blank" rel="noopener">
+      <h3 class="title">${it.title}</h3>
+      <div class="meta">${it.source || ''}${bestTime(it) ? ' • ' + bestTime(it) : ''}</div>
+    </a>
+  `).join('');
+}
 
-    // Quick links
-    linksBox.innerHTML = '';
-    (DATA.links || []).forEach(l=>{
-      const a = document.createElement('a');
-      a.className = 'pill';
-      a.href = l.url; a.target = '_blank'; a.rel='noopener';
-      a.textContent = l.label;
-      linksBox.appendChild(a);
-    });
+async function boot(){
+  try{
+    const res = await fetch(FEED_URL, {cache:'no-store'});
+    const data = await res.json();
 
-    // Sources dropdown
-    srcSel.innerHTML = '';
-    const optAll = document.createElement('option');
-    optAll.value = ''; optAll.textContent = 'All sources';
-    srcSel.appendChild(optAll);
-    (DATA.sources || []).forEach(s=>{
-      const o = document.createElement('option');
-      o.value = s; o.textContent = s; srcSel.appendChild(o);
-    });
+    // buttons + sources + updated
+    renderLinks(data.links || []);
+    renderSources(data.sources || []);
+    const updated = fmtISO(data.updated_at) || fmtEpoch(data.updated) || '—';
+    document.getElementById('updated').textContent = updated;
 
-    // Articles
-    drawCards();
+    // items
+    renderItems(data.items || []);
+
+    // filter handler
+    document.getElementById('src').onchange = ()=>renderItems(data.items || []);
+  }catch(err){
+    document.getElementById('empty').hidden = false;
+    document.getElementById('empty').textContent = 'items.json missing. Run your Update Feeds workflow once.';
   }
-
-  function drawCards(){
-    const src = srcSel.value;
-    const items = (DATA.items || []).filter(x=>!src || x.source===src);
-    list.innerHTML = '';
-    if(items.length===0){
-      const d = document.createElement('div');
-      d.className='empty';
-      d.textContent='No articles match this filter.';
-      list.appendChild(d);
-      return;
-    }
-    items.forEach(it=>{
-      const a = document.createElement('a');
-      a.className='card'; a.href = it.link; a.target='_blank' ; a.rel='noopener';
-      a.innerHTML = `
-        <div class="title">${it.title}</div>
-        <div class="meta">${it.source}${it.published ? ' • ' + fmtTime(it.published) : ''}</div>
-      `;
-      list.appendChild(a);
-    });
-  }
-
-  srcSel.addEventListener('change', drawCards);
-
-  async function load(){
-    const v = Date.now(); // bust cache
-    const res = await fetch('items.json?v='+v, {cache:'no-store'});
-    if(!res.ok){ return; }
-    DATA = await res.json();
-    render();
-  }
-
-  load();
-  // client-side ping (5 min) to catch updates
-  setInterval(load, 5*60*1000);
-  </script>
+}
+boot();
+// client auto-refresh every 5 minutes
+setInterval(boot, 5*60*1000);
+</script>
 </body>
 </html>
