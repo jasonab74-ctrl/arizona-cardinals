@@ -1,114 +1,116 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Arizona Cardinals — News</title>
+  <link rel="stylesheet" href="static/style.css" />
   <link rel="icon" href="static/favicon.ico">
   <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
   <meta name="theme-color" content="#97233F">
-  <style>
-    :root{--bg:#0d1117;--panel:#0f1720;--card:#111a24;--text:#e6edf3;--muted:#9fb0c0;--accent:#97233F;--accent2:#FFB612;--border:#203040}
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}
-    header{background:linear-gradient(135deg,#0b1218,#0f1a24 70%);border-bottom:4px solid var(--accent);padding:16px 18px}
-    h1{margin:0;font-size:28px}
-    .sub{color:var(--muted);font-size:14px;margin-top:4px}
-    .pills{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px}
-    .pill{padding:9px 14px;border-radius:20px;background:var(--card);border:1px solid var(--border);font-weight:600}
-    .controls{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--panel)}
-    select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
-    .updated{color:var(--muted)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:14px 16px}
-    .card{display:block;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:12px;transition:transform .06s}
-    .card:hover{transform:translateY(-2px);outline:2px solid var(--accent)}
-    .card h3{margin:0 0 6px 0;font-size:18px}
-    .meta{color:var(--muted);font-size:13px}
-    footer{color:var(--muted);text-align:center;padding:18px}
-  </style>
 </head>
 <body>
-  <header>
-    <h1>Arizona Cardinals — News</h1>
-    <div class="sub">Live feed • auto-updates</div>
+  <header class="hero">
+    <div class="hero-left">
+      <img src="static/logo.png" alt="Arizona Cardinals" class="logo" />
+      <div>
+        <h1>Arizona Cardinals —<br/> News</h1>
+        <p class="sub">Live feed • auto-updates</p>
+      </div>
+    </div>
   </header>
 
-  <nav id="links" class="pills"></nav>
-
-  <div class="controls">
-    <div>
-      <label for="src">Source:</label>
-      <select id="src"><option value="">All sources</option></select>
+  <main class="container">
+    <div class="controls">
+      <div>
+        <label>Source:</label>
+        <select id="sourceFilter"></select>
+      </div>
+      <div>
+        <label>Updated:</label>
+        <span id="updated">—</span>
+      </div>
     </div>
-    <div class="updated">Updated: <span id="updated">—</span></div>
-  </div>
 
-  <main id="feed" class="grid"></main>
+    <div id="buttons" class="buttons"></div>
+    <div id="empty" class="empty" hidden>No articles yet — the collector will populate shortly.</div>
+    <div id="feed" class="grid"></div>
+  </main>
 
-  <footer>Powered by GitHub Pages</footer>
+  <footer class="foot">Powered by GitHub Pages</footer>
 
-<script>
-const FEED_URL = 'items.json?v=' + Date.now();
+  <script>
+  const FEED_URL = "items.json";
+  let cache = { items: [], sources: [], updated_at: null, links: [] };
 
-function fmtEpoch(sec){
-  try{ return new Date(sec*1000).toLocaleString(); }catch(e){ return '—'; }
-}
-function fmtISO(iso){
-  if(!iso) return '—';
-  const d = new Date(iso);
-  return isNaN(d.getTime()) ? '—' : d.toLocaleString();
-}
-
-function renderLinks(links){
-  const box = document.getElementById('links');
-  box.innerHTML = (links||[]).map(l => `<a class="pill" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('');
-}
-
-function renderSources(sources){
-  const sel = document.getElementById('src');
-  sel.innerHTML = `<option value="">All sources</option>` + (sources||[]).sort().map(s=>`<option>${s}</option>`).join('');
-}
-
-function renderItems(items){
-  const selVal = document.getElementById('src').value;
-  const list = document.getElementById('feed');
-  const filtered = (items||[]).filter(it => !selVal || it.source===selVal);
-  list.innerHTML = filtered.map(it => `
-    <a class="card" href="${it.link || it.url}" target="_blank" rel="noopener">
-      <h3>${it.title}</h3>
-      <div class="meta">${it.source} • ${fmtEpoch(it.published || it.ts || 0)}</div>
-    </a>
-  `).join('') || `<div class="meta">No articles yet — the collector will populate shortly.</div>`;
-}
-
-async function boot(){
-  try{
-    const res = await fetch(FEED_URL, {cache:'no-store'});
-    const data = await res.json();
-
-    // buttons from items.json.links (mirrors STATIC_LINKS like on your Eagles site)
-    renderLinks(data.links || []);
-
-    // source dropdown
-    renderSources(data.sources || []);
-
-    // updated timestamp
-    document.getElementById('updated').textContent = fmtISO(data.updated_at);
-
-    // cards
-    renderItems(data.items || []);
-
-    // filter change
-    document.getElementById('src').addEventListener('change', ()=>renderItems(data.items||[]));
-  }catch(e){
-    document.getElementById('feed').innerHTML = `<div class="meta">items.json missing. Run the “Update Feeds” workflow once.</div>`;
+  function el(tag, cls){ const e=document.createElement(tag); if(cls)e.className=cls; return e; }
+  function fmtDate(iso){
+    if(!iso) return "—";
+    const d = new Date(iso);
+    return d.toLocaleString();
   }
-}
-boot();
 
-// refresh every 5 minutes (like Eagles)
-setInterval(boot, 5*60*1000);
-</script>
+  function renderButtons(links){
+    const box = document.getElementById("buttons"); box.innerHTML="";
+    links.forEach(l=>{
+      const a = el("a","pill"); a.href=l.url; a.target="_blank"; a.rel="noopener";
+      a.textContent=l.label; box.appendChild(a);
+    });
+  }
+
+  function renderSources(sources){
+    const sel = document.getElementById("sourceFilter");
+    sel.innerHTML = "";
+    const optAll = el("option"); optAll.value = ""; optAll.textContent = "All sources"; sel.appendChild(optAll);
+    sources.forEach(s=>{
+      const o = el("option"); o.value=s; o.textContent=s; sel.appendChild(o);
+    });
+    sel.onchange = ()=> renderFeed();
+  }
+
+  function renderFeed(){
+    const grid = document.getElementById("feed");
+    const empty = document.getElementById("empty");
+    grid.innerHTML = "";
+    let items = cache.items.slice();
+
+    const sel = document.getElementById("sourceFilter");
+    if(sel.value) items = items.filter(x => x.source === sel.value);
+
+    document.getElementById("updated").textContent = fmtDate(cache.updated_at);
+
+    if(!items.length){
+      empty.hidden = false; return;
+    }
+    empty.hidden = true;
+
+    items.forEach(x=>{
+      const card = el("a","card"); card.href = x.url; card.target="_blank"; card.rel="noopener";
+      const h = el("div","title"); h.textContent = x.title; card.appendChild(h);
+      const m = el("div","meta");
+      m.textContent = `${x.source} • ${fmtDate(x.published_at)}`;
+      card.appendChild(m);
+      grid.appendChild(card);
+    });
+  }
+
+  async function load(){
+    try {
+      const r = await fetch(FEED_URL, { cache: "no-store" });
+      const data = await r.json();
+      cache = data;
+      renderButtons(data.links || []);
+      renderSources(data.sources || []);
+      renderFeed();
+    } catch (e){
+      console.warn("items.json not ready yet", e);
+      document.getElementById("empty").hidden = false;
+    }
+  }
+
+  load();
+  // client auto-refresh
+  setInterval(load, 5 * 60 * 1000);
+  </script>
 </body>
 </html>
