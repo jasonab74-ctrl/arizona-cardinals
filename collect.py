@@ -1,114 +1,169 @@
-# Cardinals collector — mirrors the working Eagles/Colts shape
-# - Real UA so ESPN/Yahoo/Google return items
-# - MLB guard, otherwise permissive for "Cardinals"
-# - Dedupe, newest 50, writes sources + links exactly as index expects
+#!/usr/bin/env python3
+"""
+Arizona Cardinals collector — pulls feeds, dedupes, filters to NFL Cards,
+writes items.json the site uses.
+"""
 
-import json, re, time, hashlib, pathlib, urllib.parse
-from datetime import datetime, timezone
-import feedparser
+import json, re, time, datetime as dt, html
+from urllib.parse import urlparse
+import feedparser, requests
 
-from feeds import FEEDS, STATIC_LINKS
+from feeds import FEEDS, STATIC_LINKS, TEAM_NAME
 
-ROOT = pathlib.Path(__file__).parent
-OUT = ROOT / "items.json"
-MAX_ITEMS = 50
+OUT_FILE = "items.json"
+MAX_ITEMS = 50   # limit the list to the 50 most recent
 
-UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123 Safari/537.36"}
+# --- Keywords / filters -------------------------------------------------------
 
-def domain(url: str) -> str:
-    try: return urllib.parse.urlparse(url).netloc.lower().lstrip("www.")
-    except Exception: return ""
+TEAM_KEYWORDS = [
+    "Arizona Cardinals", "Cardinals", "AZ Cardinals", "Red Sea",
+    # players/coaches (common ones—expand as needed)
+    "Kyler Murray", "James Conner", "Marvin Harrison Jr", "Trey McBride",
+    "Budda Baker", "Paris Johnson", "Darius Robinson", "Jonathan Gannon",
+]
 
-def clean_url(u: str) -> str:
+# Hard exclusions to avoid *St. Louis Cardinals* MLB contamination, etc.
+EXCLUDE_PHRASES = [
+    "St. Louis Cardinals", "Cardinals (MLB)", "MLB", "baseball", "pitcher",
+    "Bats", "innings", "home run", "Cardinals vs. Cubs", "Cardinals vs Cubs",
+    "Louisville Cardinals", "Ball State Cardinals"
+]
+
+TRUSTED_HOSTS = {
+    "www.azcardinals.com", "azcardinals.com", "www.nfl.com", "nfl.com",
+    "www.espn.com", "sports.yahoo.com", "bleacherreport.com",
+    "cardswire.usatoday.com", "profootballtalk.nbcsports.com",
+    "www.si.com", "www.revengeofthebirds.com"
+}
+
+# --- helpers ------------------------------------------------------------------
+
+def now_iso():
+    return dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+
+def clean_text(t):
+    if not t: return ""
+    t = html.unescape(t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+def canonicalize_url(u):
+    if not u: return u
+    # follow simple redirects
     try:
-        p = urllib.parse.urlparse(u)
-        keep = {k:v for k,v in urllib.parse.parse_qs(p.query).items()
-                if not k.lower().startswith("utm") and k.lower() not in {"fbclid","gclid","mc_cid","mc_eid"}}
-        p = p._replace(query=urllib.parse.urlencode(keep, doseq=True), fragment="")
-        return urllib.parse.urlunparse(p)
+        r = requests.head(u, allow_redirects=True, timeout=8)
+        if r.ok:
+            return r.url
     except Exception:
-        return u
+        pass
+    return u
 
-def norm_title(t: str) -> str:
-    return re.sub(r"\s+", " ", (t or "").strip()).lower()
+def is_trusted_host(u):
+    try:
+        h = urlparse(u).netloc.lower()
+    except Exception:
+        return False
+    if h.startswith("www."):
+        h = h[4:]
+    return h in {x.replace("www.", "") for x in TRUSTED_HOSTS}
 
-def ts_from(entry) -> int:
-    for k in ("published_parsed","updated_parsed"):
-        v = entry.get(k)
-        if v:
-            try: return int(time.mktime(v))
-            except Exception: pass
-    return int(time.time())
+def looks_like_cards(title, summary):
+    text = f"{title} {summary}".lower()
 
-MLB_BLOCK = {"st. louis cardinals","st louis cardinals","mlb","baseball","nl central"}
-TRUST = {"azcardinals.com","espn.com","sports.yahoo.com","cardswire.usatoday.com","revengeofthebirds.com","azcentral.com","bleacherreport.com","news.google.com"}
+    # exclude MLB or other-cardinals teams
+    for bad in EXCLUDE_PHRASES:
+        if bad.lower() in text:
+            return False
 
-def allow(title: str, summary: str, src: str, trusted: bool) -> bool:
-    t = f"{title or ''} {summary or ''}".lower()
-    if any(b in t for b in MLB_BLOCK): return False
-    if trusted or src in TRUST: return True
-    if "arizona cardinals" in t or "az cardinals" in t: return True
-    if "cardinals" in t: return True
-    for name in ("kyler murray","marvin harrison jr","trey mcbride","james conner","jonathan gannon","paris johnson"):
-        if name in t: return True
-    return False
+    # require at least one team keyword OR "Cardinals" + clear NFL signals
+    has_kw = any(k.lower() in text for k in TEAM_KEYWORDS)
+    nfl_hints = ["nfl", "quarterback", "wide receiver", "coach", "defensive", "touchdown", "training camp", "preseason"]
+    has_cardinals = "cardinals" in text
+    has_nfl_hint = any(x in text for x in nfl_hints)
 
-def parse_feed(url: str):
-    return feedparser.parse(url, request_headers=UA)
+    return has_kw or (has_cardinals and has_nfl_hint)
 
-def main():
-    items, seen = [], set()
+def entry_source_name(entry, fallback_host):
+    # Prefer explicit source fields if present
+    for key in ("source", "author", "dc_source", "feedburner_origlink"):
+        v = entry.get(key)
+        if isinstance(v, dict) and v.get("title"):
+            return clean_text(v["title"])
+        if isinstance(v, str) and v.strip():
+            return clean_text(v)
+    return fallback_host
+
+# --- main ---------------------------------------------------------------------
+
+def collect():
+    items = []
+    seen = set()
 
     for feed in FEEDS:
-        name, url = feed["name"], feed["url"]
-        trusted = bool(feed.get("trusted"))
         try:
-            parsed = parse_feed(url)
-            entries = parsed.entries or []
+            d = feedparser.parse(feed["url"])
         except Exception:
-            entries = []
+            continue
 
-        for e in entries:
-            title = re.sub(r"\s+", " ", (getattr(e,"title","") or "").strip())
-            link  = clean_url(getattr(e,"link","") or "")
-            if not title or not link: 
+        for e in d.get("entries", []):
+            link = e.get("link") or e.get("id")
+            if not link:
+                continue
+            link = canonicalize_url(link)
+            host = urlparse(link).netloc or "source"
+
+            title = clean_text(e.get("title", ""))
+            summary = clean_text(e.get("summary", "") or e.get("description", ""))
+
+            # basic dedupe by URL + normalized title
+            dedupe_key = (link, title.lower())
+            if dedupe_key in seen:
                 continue
 
-            src_dom = domain(link)
-            summary = getattr(e,"summary","") or getattr(e,"description","")
-
-            if not allow(title, summary, src_dom, trusted):
+            # filtering
+            trusted = is_trusted_host(link)
+            if not trusted and not looks_like_cards(title, summary):
                 continue
 
-            key = hashlib.sha1((norm_title(title) + "|" + link).encode("utf-8")).hexdigest()
-            if key in seen: 
-                continue
-            seen.add(key)
+            # published time
+            ts = None
+            if e.get("published_parsed"):
+                ts = time.mktime(e.published_parsed)
+            elif e.get("updated_parsed"):
+                ts = time.mktime(e.updated_parsed)
 
-            ts = ts_from({
-                "published_parsed": getattr(e, "published_parsed", None),
-                "updated_parsed": getattr(e, "updated_parsed", None),
-            })
+            pub_iso = None
+            if ts:
+                pub_iso = dt.datetime.utcfromtimestamp(ts).replace(microsecond=0).isoformat() + "Z"
 
             items.append({
-                "title": title,
-                "link": link,
-                "source": name if trusted else (src_dom or name),
-                "published": ts
+                "title": title or "(untitled)",
+                "url": link,
+                "source": entry_source_name(e, host),
+                "published_at": pub_iso,
             })
+            seen.add(dedupe_key)
 
-    items.sort(key=lambda x: x["published"], reverse=True)
+    # sort newest first, cap list
+    def sort_key(it):
+        return it.get("published_at") or "1970-01-01T00:00:00Z"
+
+    items.sort(key=sort_key, reverse=True)
     items = items[:MAX_ITEMS]
 
-    data = {
-        "team": "Arizona Cardinals",
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+    sources = sorted({it["source"] for it in items})
+    out = {
+        "team": TEAM_NAME,
+        "updated_at": now_iso(),
         "items": items,
-        "sources": sorted({it["source"] for it in items}),
-        "links": STATIC_LINKS
+        "sources": sources,
+        "links": STATIC_LINKS,
     }
-    OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"items: {len(items)}  sources: {len(data['sources'])}  updated: {data['updated_at']}")
+
+    with open(OUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=2)
+
+    print(f"Wrote {len(items)} items to {OUT_FILE}. Sources: {len(sources)}")
 
 if __name__ == "__main__":
-    main()
+    collect()
