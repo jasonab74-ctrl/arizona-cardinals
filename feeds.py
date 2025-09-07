@@ -1,46 +1,65 @@
-# feeds.py — Arizona Cardinals
-# Defines (1) news feeds the collector reads and (2) quick-link buttons for the UI.
+# feeds.py — Arizona Cardinals sources
+# This file is imported by collect.py.  Edit/commit to change sources.
 
-TEAM_NAME = "Arizona Cardinals"
+TEAM = "Arizona Cardinals"
 
-# News sources (shown in the Sources dropdown; also used for filtering labels)
-# We lean on reliable RSS and Google News domain queries so it never runs empty.
-FEEDS = [
-    # Broad aggregators (high volume, good backfill)
-    {"name": "Google News — \"Arizona Cardinals\"", "url": "https://news.google.com/rss/search?q=%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
-    {"name": "Bing News — Arizona Cardinals",       "url": "https://www.bing.com/news/search?q=%22Arizona+Cardinals%22&format=rss"},
+# Each source is: (display_name, feed_url_or_query, type)
+# type: "rss" for direct feeds, "bing" for Bing News query, "google" for Google News RSS.
+# You can comment out any you don’t want.
 
-    # Official / league
-    {"name": "azcardinals.com (official)",          "url": "https://news.google.com/rss/search?q=site%3Aazcardinals.com+%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
-    {"name": "NFL.com — Arizona Cardinals",         "url": "https://news.google.com/rss/search?q=site%3Anfl.com+%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
+SOURCES = [
+    # Official / team & league
+    ("azcardinals.com", "https://www.azcardinals.com/rss/news", "rss"),
+    ("NFL.com — Arizona Cardinals", "https://www.nfl.com/rss/rsslanding?searchString=arizona+cardinals", "rss"),
 
-    # National outlets (team sections)
-    {"name": "ESPN — Arizona Cardinals",            "url": "https://news.google.com/rss/search?q=site%3Aespn.com+%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
-    {"name": "Yahoo Sports — Arizona Cardinals",    "url": "https://news.google.com/rss/search?q=site%3Asports.yahoo.com+%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
-    {"name": "Bleacher Report — Arizona Cardinals", "url": "https://news.google.com/rss/search?q=site%3Ableacherreport.com+%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
-    {"name": "ProFootballTalk — Cardinals",         "url": "https://news.google.com/rss/search?q=site%3Aprofootballtalk.nbcsports.com+Cardinals&hl=en-US&gl=US&ceid=US:en"},
+    # USA Today network (Cards Wire)
+    ("Cards Wire (USA Today)", "https://cardswire.usatoday.com/feed/", "rss"),
 
-    # Team/beat sites with stable feeds
-    {"name": "Cards Wire (USA Today)",              "url": "https://cardswire.usatoday.com/feed/"},
-    {"name": "Revenge of the Birds (SB Nation)",    "url": "https://www.revengeofthebirds.com/rss/index.xml"},
-    {"name": "SI — All Cardinals",                  "url": "https://www.si.com/nfl/cardinals/rss"}
+    # ESPN team
+    ("ESPN — Cardinals", "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/22/news", "rss"),  # ESPN JSON-as-RSS handled in collect.py
+
+    # Yahoo team (query)
+    ("Yahoo Sports — Cardinals", "https://news.google.com/rss/search?q=%22Arizona%20Cardinals%22%20site:sports.yahoo.com&hl=en-US&gl=US&ceid=US:en", "rss"),
+
+    # Sports Illustrated FanNation
+    ("SI — All Cardinals", "https://www.si.com/nfl/cardinals/.rss", "rss"),
+
+    # ProFootballTalk (Cardinals tag)
+    ("ProFootballTalk — Cardinals", "https://profootballtalk.nbcsports.com/team/arizona-cardinals/feed/", "rss"),
+
+    # SB Nation (Revenge of the Birds)
+    ("Revenge of the Birds (SB Nation)", "https://www.revengeofthebirds.com/rss/current", "rss"),
+
+    # NBC Sports – general Cardinals news via Google News (gathers lots of outlets)
+    ("Google News — Arizona Cardinals", "https://news.google.com/rss/search?q=%22Arizona%20Cardinals%22&hl=en-US&gl=US&ceid=US:en", "rss"),
+
+    # Bing News query (broad catch-all)
+    ("Bing News — Arizona Cardinals", "bing:Arizona Cardinals"),
 ]
 
-# Quick-link buttons across the top (appear in the UI immediately)
-STATIC_LINKS = [
-    {"label": "Schedule",   "url": "https://www.azcardinals.com/schedule/"},
-    {"label": "Roster",     "url": "https://www.azcardinals.com/team/players-roster/"},
-    {"label": "Depth Chart","url": "https://www.ourlads.com/nfldepthcharts/depthchart/ARZ"},
-    {"label": "Injury Report","url": "https://www.azcardinals.com/team/injury-report/"},
-    {"label": "Tickets",    "url": "https://www.azcardinals.com/tickets/"},
-    {"label": "Team Shop",  "url": "https://shop.azcardinals.com/"},
-    {"label": "Reddit",     "url": "https://www.reddit.com/r/azcardinals/"},
-    {"label": "Bleacher Report", "url": "https://bleacherreport.com/arizona-cardinals"},
-    {"label": "ESPN Team",  "url": "https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals"},
-    {"label": "Yahoo Team", "url": "https://sports.yahoo.com/nfl/teams/ari/"},
-    {"label": "PFF Team Page","url": "https://www.pff.com/nfl/teams/arizona-cardinals"},
-    {"label": "Pro-Football-Reference","url": "https://www.pro-football-reference.com/teams/crd/"},
-    {"label": "NFL Power Rankings","url": "https://www.nfl.com/news/power-rankings"},
-    {"label": "Stats","url": "https://www.nfl.com/teams/arizona-cardinals/stats/"},
-    {"label": "Standings","url": "https://www.nfl.com/standings/league/"}
+# Buttons shown at the top of the page (label, url)
+BUTTONS = [
+    ("Schedule", "https://www.azcardinals.com/schedule/"),
+    ("Roster", "https://www.azcardinals.com/team/players-roster/"),
+    ("Depth Chart", "https://www.ourlads.com/nfldepthcharts/depthchart/ARZ"),
+    ("Injury Report", "https://www.azcardinals.com/team/injury-report/"),
+    ("Tickets", "https://www.azcardinals.com/tickets/"),
+    ("Team Shop", "https://shop.azcardinals.com/"),
+    ("Reddit", "https://www.reddit.com/r/azcardinals/"),
+    ("Bleacher Report", "https://bleacherreport.com/arizona-cardinals"),
+    ("ESPN Team", "https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals"),
+    ("Yahoo Team", "https://sports.yahoo.com/nfl/teams/ari/"),
+    ("PFF Team Page", "https://www.pff.com/nfl/teams/arizona-cardinals"),
+    ("Pro-Football-Reference", "https://www.pro-football-reference.com/teams/crd/"),
+    ("NFL Power Rankings", "https://www.nfl.com/news/nfl-power-rankings"),
+    ("Stats", "https://www.teamrankings.com/nfl/team/arizona-cardinals"),
+    ("Standings", "https://www.nfl.com/standings/league/2024/REG"),
 ]
+
+# Optional image/logo path used by index.html (keep as-is if you already have it)
+LOGO_PATH = "static/logo.png"
+TEAM_COLORS = {
+    "primary": "#97233F",  # Cardinals red
+    "accent":  "#FFC20E",  # gold beak accent
+    "dark":    "#121212"
+}
