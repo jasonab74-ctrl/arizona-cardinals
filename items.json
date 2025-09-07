@@ -1,6 +1,444 @@
 {
   "team": "arizona-cardinals",
-  "updated_at": "2025-09-07T00:00:00Z",
-  "sources": [],
-  "items": []
+  "updated_at": "2025-09-07T20:37:18.283856+00:00",
+  "sources": [
+    {
+      "id": "azcards",
+      "name": "azcardinals.com"
+    },
+    {
+      "id": "cardswire",
+      "name": "Cards Wire (USA Today)"
+    },
+    {
+      "id": "rotb",
+      "name": "Revenge of the Birds (SB Nation)"
+    },
+    {
+      "id": "pft",
+      "name": "ProFootballTalk — Cardinals"
+    },
+    {
+      "id": "espn",
+      "name": "ESPN — Cardinals"
+    },
+    {
+      "id": "yahoo",
+      "name": "Yahoo Sports — Cardinals"
+    },
+    {
+      "id": "si",
+      "name": "SI — All Cardinals"
+    },
+    {
+      "id": "gnews",
+      "name": "Google News — Arizona Cardinals"
+    },
+    {
+      "id": "bing",
+      "name": "Bing News — Arizona Cardinals"
+    }
+  ],
+  "items": [
+    {
+      "id": "f0298936b4c42445bcd73eadfbb96f38",
+      "title": "Murray throws 2 TD passes to help the Cardinals hold on 20-13 in Saints coach Moore's debut - Alton Telegraph",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQNnhDWjNCMnMzREg2Z0hkbkRKT2dSQWtzS3kwWnUtRXB5X25RZEFEaVhwdkF1MUhCUmlZRnNXQjVpd1ZDT01lcXBySlI2c1o1YlFSQThsQlFab2xiZkpXMWZZY3lFNmM0M0hoaUtSYnB5YXB6eTczQkFyOHlhV3dLd0JrYUtBX1ZvV1lldzNGOXZWa04zM21zSFBhREZMZFZ6RHFHWDBzcw?oc=5",
+      "published": "2025-09-07T20:35:13+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "f20a5d8931b0917ca860af2896607c5a",
+      "title": "Kyler Murray's two TD passes lift Cardinals over Saints",
+      "link": "https://www.reuters.com/sports/nfl/kyler-murrays-two-td-passes-lift-cardinals-over-saints--flm-2025-09-07/",
+      "published": "2025-09-07T20:22:36+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "3b8e84021d36f4ae0512bb7bac6f47c3",
+      "title": "Kyler Murray’s two TD passes lift Cardinals over Saints - National Football Post",
+      "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPSWdsWnJoczM5WE04ZDV0NG8wc1g3YWw0c2JCS0RvbXd0ZTZsOWVxeTc3cncyX3JQVHZ1VHp2RzFLM1p3Q0tEa3N3VEFpSzJCOThnbFVlUTk3WE0ya2NUTE5PM1ZqMEJLMjY0ZW12akpueDh5enRPa0RCUFJ6QXBKSzlPZ0hfSzFvSHZsZmk3bnNRVnU3bUpWODMyWUc?oc=5",
+      "published": "2025-09-07T20:22:29+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "2c28faf93a63dedc95dabd07c3458b1b",
+      "title": "LOOK: Best photos from New Orleans Saints vs. Arizona Cardinals - Saints Wire",
+      "link": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPMGRmTmpiXzlxQUljbkJndU5ORGNteXNORWtLX3ZScDRDVlZfYXlyZ3ZaRE1Fa1g3cF9jeEE5cVpKZXNOR3ZkWmk4bnhyWmJTbGZNei1hclM0NlN2Y00zeU1fZHpBM0xXcXZKUmM0a3BsczZVVVBzUFB5Q2Q2TlRKUVdnbWR0TG0wRTdFNnp5aEVjQ3lvQjVFQnZhRFFWWFJSd0o0bGVqRENOdUo0WTB1YW1pUW9PS01ZVFItTUV0djQ0Y0NSSmRORTR6bW1lRHFVTWVDOGNjSGhHWEYyYzAtX2lUZEVCQQ?oc=5",
+      "published": "2025-09-07T20:22:20+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "e45b9f8b368e016f5f3661f57e0436c6",
+      "title": "Key plays from Cardinals-Saints: Kamara runs it in 18 yards, Conner catches shovel pass for TD - ESPN",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPck51aTFEejRqVXRndGtpUlZXQ1FTX3RvV2xiRVJqOWVqaU5TQkpJdVkyd0M2dnlVZF9MdUNuZE92eERmUXEtRWFhLUdkZ1k3UnJJN3dFWWxjX3hwM0hwV2NIdEp3dDRyQUJGbm9NWXVLZDlVYk5CazRuSk5NbnFhQ2lmbTdHdjRseklVUmxyVXVRMXZBaVZETloyYTNPUTc2QWlzbV9CRHFmUzdxcWhGbDZkUE5ObURiVEJlUQ?oc=5",
+      "published": "2025-09-07T20:18:00+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "e8df1b93f88365bbd1472ea89edf2523",
+      "title": "Cardinals survive mistake-filled season opener in 20-13 win over Saints - Burn City Sports",
+      "link": "https://news.google.com/rss/articles/CBMifEFVX3lxTE56UGZQQ0RTdGF4NzI5RmNkSmk1MGFlbjdxZm1QelFTak9BdlBiTUF1c2NZd3Njbzh4Qkt6b3hOVDlMMkdfN0FUUjBWd1BlMFdpVHBiTXFJcy1sdnVXanlaRDhpZDJfaVNWN0w4ZnRMZHdIV3M5ZVE1bUF1ekY?oc=5",
+      "published": "2025-09-07T20:14:59+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "f5960674edf7ab054745ba6932f612be",
+      "title": "Alontae Taylor rushes untouched to drop Murray for 15-yard sack | Saints-Cardinals Highlights | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQU0tGUWtkUjlzWWZ4aHk4Ri1CMW9WcFVISE5kbGZza1drN05vZnNFUE94dk5FcUdIdkdvckd1dVNTSTQwMi12dXRtdkNCUjctVUhSNHZDa2NiMDE0VldhZUg4ZEh5YmtaVXVkS05TQ1VOb3pvMV80d0VwamwzQmZOd3pDLVFPQjhuMHRWcXpYZGxCMUxFWUdfaWhDbnZVNjJGZmpvczVTWEZBbDlYVXd2Tjh4OXo0QQ?oc=5",
+      "published": "2025-09-07T20:09:41+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "27d71afd4e87b887ea81f438bc5357fb",
+      "title": "Cardinals Escape Saints Upset Bid in Chaotic Week 1 Win - Sports Illustrated",
+      "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQY3Y0MjR0bUttMTZuV1lnWGJDb3pHc0ROc1YtWWw0eHc2SkVjeGxiR0o1Mm52QjBDY2lPV3NVZ0RvZ1o3QzY5QWhjaW5ubW5ydGhZeXU4OURGR3lodF81Y3F3dmQ2UlJoT3RzVm93ZXFyRzFrQTY3TTFfY0VMb2xZYy1Jc0t1bjNOTTMzY1FlOVZJcEdlaXhNUnFXUzRsMXZGQTBYRGxpZzRpQQ?oc=5",
+      "published": "2025-09-07T20:08:20+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "2519cb953c7bced5af091e1cdd0ade84",
+      "title": "Game Recap: Arizona Cardinals 20, New Orleans Saints 13 | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQRWN2UXM3a282a0Z4aGhsSlRpamFjVGJpVHEyeU9EYXBCanFYQ2JyZFY4ZDR1RWpTbDVGd21HVVF2Q1lUSmJvUzc1aWIxUS0wUE5DM0VLV2pSSVhJYnFzRG8yenlya2htVEx5RWdqV0Y2ejVxQktzY1EybFp2aDdWeWp6bEN4WXgzNEpBcFlHTEFndW5tNHgzQ3JQQ1g4cjR0LWxWTUE4dw?oc=5",
+      "published": "2025-09-07T20:06:12+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "4018b12d29aada8ed722d07d0aa1d448",
+      "title": "Arizona Cardinals survive in win over New Orleans Saints",
+      "link": "https://www.revengeofthebirds.com/arizona-cardinals-news/82662/arizona-cardinals-survive-in-win-over-new-orleans-saints",
+      "published": "2025-09-07T20:03:32+00:00",
+      "source": "Revenge of the Birds (SB Nation)",
+      "source_id": "rotb"
+    },
+    {
+      "id": "1a741e95fe711c88061e33bcc04cce8b",
+      "title": "Will Johnson drops the hammer in Cardinals’ season-opening win vs. Saints - Arizona Sports",
+      "link": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBfdXZrRUwzdmxjQkZJVjliWFhwaWFWYXpnTUxoWTduME9wbDRySUpRNk5CcVZNN0wtajNtVkk2M1d6amtfbWhfb2p2NGVhOVdzcnJULTN0dVh5ZkF0Tm9DcjhYTWJjeDdsMTdPTExINjAxUzdmTkRpSTBEQQ?oc=5",
+      "published": "2025-09-07T20:02:38+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "efca9232ba1d89c2f69f0c2397cc3d89",
+      "title": "Cardinals March Into New Orleans, Notch Season-Opening Win Over Saints",
+      "link": "https://www.azcardinals.com/news/cardinals-march-into-new-orleans-notch-season-opening-win-over-saints",
+      "published": "2025-09-07T20:02:35+00:00",
+      "source": "azcardinals.com",
+      "source_id": "azcards"
+    },
+    {
+      "id": "61b4f3cce375ec5cede3ee42bf8e9d10",
+      "title": "Blake Grupe's 28-yard field goal is good | Saints-Cardinals Highlights | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPUFVaUXNDUEJBS2d2YkxLSi0xbFVRVTlCdHRhXzZCamZjV09FRUI4V21pUGppVTMyWTdsOUIwdWNBdV95alBwUUFQQXViVWpTcTNkRERSX1hvSUFTX2wxRVRXUko0MlVtVWZPazZGMkM0VHAtRFdYb1lVdzlhRmZ3UVRMSkpfWkpuNW1uTER3NXlCMVBxWUt2QkpGUEw5eUg1OVNONEswVlpuUlNMcGtXbQ?oc=5",
+      "published": "2025-09-07T19:56:01+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "5a73b958f26b84fb6c85e66df3eb1e81",
+      "title": "Juwan Johnson absorbs hit for clutch grab | Saints-Cardinals Highlights | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQS1BoLVNQREpENWNURTFYVE9ieVBiOC1LNll3cUhEMWhZQ0YzN0xTaUxmMjQ4czB6MWdtOTlKMTRGS1FsNTFsMU5yNFVIdER1SUVmbGZXeEdrQmZIUDZKYjNrc1lHczh3RUZBdl8wTHBJS0twZi15QUZXNmdONVQxRGh3WWdfT3RFMWVISGRZMmhFZXBZLVZzdTRGczF0MUszTkJwZ3ZaZlB5MEVKS0VsaERn?oc=5",
+      "published": "2025-09-07T19:52:22+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "4892b4bbef00de6d0ff39a68cf19b9a0",
+      "title": "Cardinals vs. Saints: How to Watch, Listen, and Stream Games 9/7/2025 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOUXNKYWNJc3c4R21TXzF4c3pEdklnQlpRb2xfM1pwTmc3cUE1MmZTMUFITlpfMWJYM1ZBaTRucENRNlVnVjZnQ05aZkRFWURRVmdrTGJtTHNMRUhYaXJLNU5SRjVGSVg3cWl5eE01QXBjbTRYVXFwbnloVUlVMXZORjJlc1VtNmpoaVpHaTM5RXNGMHZPLUN5QWxYOWplMVZtUkZUWGlISFMyaGhnT050OEFtMmIxdw?oc=5",
+      "published": "2025-09-07T19:45:26+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "e16053eaba780675cb169d78ded33843",
+      "title": "Arizona Cardinals vs. New Orleans Saints Odds, Betting Lines, Expert picks, Game Projections, DFS Projections and Player Prop Projections - Sunday 09/07 10:00 AM - SportsLine",
+      "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBqZXlIY3ZJdXZ2cFpFbjFfcGd6WGgzU0Myenh1ZE5fYWhPdXc2NWJSNF9EYXZxcWViV3EzUEJEOVdIZ29fTnV0U1VDOXMzcUo4VDB1RXdfcjZLY3hQUXhxc0l2d1VMTEtxcVRyUHpJeWlINUE?oc=5",
+      "published": "2025-09-07T19:22:10+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "f7e7d87ee32ee15ca0e4997e710aad80",
+      "title": "Cardinals' Joey Blount, Cody Simon ruled out vs. Saints",
+      "link": "https://arizonasports.com/nfl/arizona-cardinals/joey-blount/3595225/",
+      "published": "2025-09-07T19:17:43+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "388b077a7512aa1bcb63306bff4867d3",
+      "title": "Cardinals’ Joey Blount, Cody Simon ruled out vs. Saints due to concussions - Arizona Sports",
+      "link": "https://news.google.com/rss/articles/CBMid0FVX3lxTE92RXdhcnVCVm1qWlF0d3JvYUd1YU5pYmpSekF1Y2ZTZHc5eHY4UkhoTEVyTG9feG8wcnhjMnVITFpsWmFrTGVHSU5VdEgwdWNQNlJZNl93REFUUVVRVWJ0UXFhYkFyTWhWVWpjay1KT2lVTnZwN2Fr?oc=5",
+      "published": "2025-09-07T19:01:55+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "b8a8e2867c2821a679cc503518bbd450",
+      "title": "Cardinals injury update: 2 special teams leaders out with concussion - Yahoo Sports",
+      "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOSFhPanJXV0lOSS04MU1TT0hPNEQ3OE1zb0tHV2ZvOFQ4RUQ5cTBzY3BDZDFVSU9GMDVHRTRTOVlpb2ZpSzU5czI1WXQ3MlNqMDRzRldBdk54aHppVHg3OW55aHlVQXdSY3p5QkIwNjBFYWdWZjUtYlltWWFQSXJSYjVFdDZMWGc?oc=5",
+      "published": "2025-09-07T18:59:26+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "b4c716a3f02c600a4a2e37472bb7e23b",
+      "title": "Concussions Knock Out Multiple Cardinals vs Saints - Sports Illustrated",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQYzFEazRLTDczNG0zNlg0MkY4ZGJQdTBoUnBxdFlRQ2ZhTTA2Z1JTZW5hbC1kZEVsWnBRRkxZUFhPdzVYbDJVNnBKTkhxVW5KY0pnWXVFZ3VtZGtiMDJSaENpUFZGQ05kbXU3dUYtLW1OY05pUGc2UVNVVk4ydUgzRGVzWkRvajg3ZGctdjA5bDJsQzM3NWk5cGZfWnJMa2VPMWQtMDV1bHY?oc=5",
+      "published": "2025-09-07T18:51:01+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "c273380f84522ed15a35ad5e0df745ce",
+      "title": "Saints coach Kellen Moore explains questionable timeouts strategy before halftime - Saints Wire",
+      "link": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOcF91QndDbHBzMjFGV1loczNFeVFKdkhXQTlHcEVXei1OV04zWi1CbDlDeDNVUjcxS1ZCc29QeDFXc21VcE5SeTVXQ2U5aV9hR25kUGxYaTI2T2M5WmxLeTlPX1liQ0pCemROWmNYaHdxLVFDRGU4MU4tRnRLLXZteE5ERmVPZWdWUnNSeU40dnA0OEplWFBHbnFXSllRRDhtY2VHSm9EaW9xUzdjb21WQ1M1U1lhcXBlWmxzcWJHLWtjc2U2WE5JY1BaNTliY1V5d3h0S2lB?oc=5",
+      "published": "2025-09-07T18:42:34+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "437d5da1c80652e24c5b77b4c187ce4d",
+      "title": "Cardinals-Saints second half open thread - Revenge of the Birds",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxOSzBvYjZreG1SNDVpWkZLOTlPUFlHeWVGSnBrc01lV0FJVHlmM1hZOFUxOGx6ay1DM3NROVZpeE1nUmZxcjYtRVo5aUNkaU41SUR0OWViNnoxTXl3aHdrOGViQzlrRFdPNGJmZU5ZdnZxeVFsQm00OFlsRk14WVBTdU9JOUxsTmdmLW44a1MxYnNjblJFQ1JPbGk2RndYV0F5SkhzLTlNSk0?oc=5",
+      "published": "2025-09-07T18:33:16+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "25f3d00971f50881e10f0e1bfe5ed0af",
+      "title": "Cardinals-Saints second half open thread",
+      "link": "https://www.revengeofthebirds.com/game-day-threads/82657/arizona-cardinals-saints-second-half-open-thread",
+      "published": "2025-09-07T18:31:20+00:00",
+      "source": "Revenge of the Birds (SB Nation)",
+      "source_id": "rotb"
+    },
+    {
+      "id": "1d35304e489539aef3f6d71fad05d97a",
+      "title": "Cardinals vs. Saints live updates, score: Scoring, highlights, injuries for Week 1 - USA Today",
+      "link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNWUNJZEh2YmZfSzJYQXcyMGY0T2Rpd0U0SUNYWEN2WHkyMGo1cWZGWkprVzZVQlN2WUZwZXdVaWU0R1cwRE9OU2VWRnFtbFdaV0lhVWgzQy1Uczc2ZDRUeTF4dXJEMWdaTDVsYThGVFFBZllIQXNidXEtQWNTam5vY2dHOENFTlM5T2hGOWxUMGFwRl9zcU9EOTByZkM5dzJrb19ZY0YxczVZQloySVFJU0JHNXp6d2R4QlNwOURkV09QQVgxY09QalZvR2REVlE?oc=5",
+      "published": "2025-09-07T18:29:52+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "908cffd34008717928bc563197abd4bc",
+      "title": "Halftime update: Arizona Cardinals 17, New Orleans Saints 10 | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOdHlKWXFOaGI3cUlaVGZsVHpQS0JhZDFrbzY0ZWFXNFp0UVNPU29mZDdyal8ycnVuVnVVNG1ZdUgxQU9TUTFwa1JOQmdMMk5PV0xLOUdJcmVMQWtDNU14b1BSX04zWTMxY1QyRS0tNmEyRi1JLTlXRmFjU25pMjUyOGZrTG5sRzB6R21iNVVyOHBneUpDYmNnTFVhWm14UkxkM1J0ekZKbDRwVDRPUEE?oc=5",
+      "published": "2025-09-07T18:24:15+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "0ea3749d75f0bb36abf5b6a1cbd2066e",
+      "title": "HIGHLIGHT: James Conner Takes It Up The Middle for 12-Yard Gain - Arizona Cardinals",
+      "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQWXJyMUtZVG16cmU0NC1WZnhxX3NnZExQWVZsb3lnMWI4Z09NZjAtUnZJVlFJVHE1UTgzSHZ1MVBfeVFjWW5lQlFsbmxySnIyQndoZVBZYmQzZUN1SWhNbllILVdFUnlyYTlJRHdiUV9WZ2VlbXltRzMyTmxJLUlqTXVaZU92SnNhT3J2VUNRc2gtOTVNdERXRlBDYnE?oc=5",
+      "published": "2025-09-07T18:12:05+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "892593f3fcedc8d6cd9b7c9730db8abc",
+      "title": "Saints' Chris Olave gets injury update in Week 1 vs. Cardinals",
+      "link": "https://sports.yahoo.com/article/saints-chris-olave-gets-injury-180712714.html",
+      "published": "2025-09-07T18:07:12+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "23730a76399c672bf9749eb5f8c58531",
+      "title": "Sputtering Cardinals offense wakes up vs. Saints behind Marvin Harrison Jr. TD - Arizona Sports",
+      "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1RNTlNRFQySWVYazBINzRFbTJwYXhzLXZKOWtFdXZWSTRkekQ5VW1RVzd1N2JHQU5mV1hzd3BhQlBRYzF5UU0waXZNTmJSZll6eVVLLU9OdmdUcUd6akNYeDE2eGkyajV0aEhfRkRkTks5M0I4Z0dRUm9lT24wRmM?oc=5",
+      "published": "2025-09-07T18:05:37+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "8f5d855bb8ea45a77d9d101fdf0f1727",
+      "title": "Alvin Kamara scores first Saints touchdown of 2025, 1,000th TD at the Superdome",
+      "link": "https://sports.yahoo.com/article/alvin-kamara-scores-first-saints-180536185.html",
+      "published": "2025-09-07T18:05:36+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "8c46f4005e4ec4b78d52876cf94ba928",
+      "title": "Key plays from Cardinals-Saints: Kamara runs in 18-yard score to give Saints first TD of the season - ESPN",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNRlJvX2lHRHNvNm11NGRDWHU2aXhTSk9EWThRWmloOUxhTzRkcEZaeDdIbnYxS3Q5a0drRjBFM01LQ0FkVFdmUUhuTG83T3ZnSGdOQk5oR3ZVdTVqc21CUkg5cmV0bmpDQUZuaDE3ZzV4V1lycFdoQ2RVOVFJTTlxT3ZnRXlMM0dtSjJfdEQ3WVJFbXg5cTlzc1QwTkJ0QUNxQ21UcXNGOWNYcU16bjZyeG9Rd3hFRmdXZ0twRGc5c2o?oc=5",
+      "published": "2025-09-07T18:02:09+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "2b6306fb5f957e444fc6fe0ad8fa91dd",
+      "title": "Key plays from Cardinals-Saints: Kamara runs in 18-yard score to give Saints first TD of the season",
+      "link": "https://www.espn.com/nfl/story/_/id/46185948/arizona-cardinals-new-orleans-saints-nfl-week-1-highlights-touchdowns-plays",
+      "published": "2025-09-07T17:54:00+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "e120909be00883cf791bdd7dea7088f6",
+      "title": "Alvin Kamara expert vision on 18-yard TD run | Saints-Cardinals Highlights | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQRzFkSDlydG1SdlRQczhSYk55Vno2ZHlIV0o0eHU1emFzSGFqcjhRYUVlSHloam9NRThEVWhidFU0MmFMeUZaOG1ZUnRJcGkyRnpMOTRSQlpwQ0p3NS1SRE1ST19yRGFORWc3a1FKYmVMa2Rnc0lzUFNCak5oa0dQcmxISXBENjkxWm1vNE1WUjZlTm1QbUszQkxMU2RhVmZIcFZiUUlaZTFKY3ZQNUE?oc=5",
+      "published": "2025-09-07T17:49:03+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "b1bb7a78aec402a111e602759ff55008",
+      "title": "Arizona Cardinals vs. New Orleans Saints - Live Score - September 07, 2025 - FOX Sports",
+      "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNTGozUmhhVjZtU0o3dWdlNG5TWXNlTFRrSmhFSnc2TFhnNEM0eGxfMS1hbjFGUVotZHhzZThNUmw3Y0hUeGgyVndUMHFIQ2doUlFwSHI4bGtXRUFWUExZVXlnUHdWVnYzeFNUbUJ1UUt4ckQxdTNuaDBCT2hSeXNOQWd1VEx0RXBqVmdNNWowdFVjV2l6T1ljNDc4X1RYeFJ6cmpYN2ZlNFNsdXNu?oc=5",
+      "published": "2025-09-07T17:44:38+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "1d879b17c20ab0a8e9b520da718e4a72",
+      "title": "HIGHLIGHT: Chad Ryland Puts Cardinals On The Board With 42-Yard Field Goal - Arizona Cardinals",
+      "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQd0ZxT0ZyZzB4WmlrWFBpSXdna2NwRXV1bTI0aXF4OU1hdWZqbFo5VHU2bjVtTEVUNXFjWmJwM3N6TDdSOGlfYjFtUzlsWEhNRE94Z0RVbDJUZGRqN1dyeTZETVdWdmc0c2ZCVS00QS1jQzVtMk95Vk0tMEhLQXpIZE4tVHhSMG1JM0JUYndTcE5icEJ2NDhUaDY0SEtsQy1NRU85NlFNamUzS3M?oc=5",
+      "published": "2025-09-07T17:42:49+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "830442d705b70385825f7620c2b44fed",
+      "title": "New Orleans Saints wide receiver Chris Olave makes sideline grab vs. Arizona Cardinals - NFL.com",
+      "link": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBhMnZTMnJ1WGVFMFdWSlkyTEExWkE2VkViVnRPLXRDY1pxMlRaSi1ObDk1Tm9QQWZFVmR0aFdjRjlRcmtxUVp4RllXOGpmWjVuMEtJS1JLVm1SRnBCbkx3Nk9RVWJKOVoxam9OWnB3X3habWp3RkdHamZnRQ?oc=5",
+      "published": "2025-09-07T17:41:30+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "1a093b26b481e367003670ff9f778ecc",
+      "title": "Arizona Cardinals at New Orleans Saints: Scenes from the Superdome - The Arizona Republic",
+      "link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQZXR3c1ZBWWVSYnJpVWVWZDFYdU5ZaGZfX1NndDQ1WjdidV8tUHliNlNjWlBCUlZLNUVXSFFpNnZ3bDY5aVJMY0tIaTBNRXJBRmpPZHNHLTZHMnVMWW1zU3llZ05rY0N3U19oeHYtWGNRN0pxQnZldldxQjhza0ZFRzNKLTZvaDRUeXlDNjBWZlRhbms0Y29xa3dnNjU3SVlRRUxDOG1HTHpKVkpUcWl4SGxueEs5TGxFM1NIcWZPVzJKRG5TTldVbXZFLWRKRDdqNnRUM3dzQ1FjYnFSR2c?oc=5",
+      "published": "2025-09-07T17:40:43+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "d4985de8d46c7ff1e8bb98f983012098",
+      "title": "Arizona Cardinals vs. New Orleans Saints: live game updates, stats, play-by-play - Yahoo Sports",
+      "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQYlh3SGVQX29zS3AxNkJGMXdBeHBYc19Dd0JkWm5McjZNejdQRDB1aEJtdmpQRU9ENWxTVmZnUXdvY25CMDNKdDRHWGVXdWtUUGpVTkJmcWEzd3dKM2pDcFJlVUUwNjU2VXA1OTVMTDJDc2MwUC1xcHZrRzEwZHJYOVpndWk?oc=5",
+      "published": "2025-09-07T17:31:25+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "69a2f738bf7edb03abcf0d2f9f890bce",
+      "title": "Calais Campbell Joins Exclusive Arizona Cardinals Club - Sports Illustrated",
+      "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNV19zWTBkbGJMdEtlNlZvUDJiVFJGRTFwMUd0Y2poLVlfT3JwZjl2blNXV29JamFJQmRLdlVMYVktM0Q3SmQ5a29OSW1OaWg5bkhoR3laRnZxb2VMdERZOGZ4X0xBV3VSbWw5aWVETkFsZ1YxU05hMTJLTGdoV1VRZ1FFZnNJS051TzlHTUNwdTBGVkN2V1Rz?oc=5",
+      "published": "2025-09-07T17:10:49+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "cc8b3002b44344c2b6f76448eabf64d1",
+      "title": "Week 1 early game thread: Who are you watching this morning?",
+      "link": "https://sports.yahoo.com/article/week-1-early-game-thread-170310210.html",
+      "published": "2025-09-07T17:03:10+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "24463b5db88d661eafe3189000052906",
+      "title": "What channel is Saints vs Cardinals game on TV today? Start time, NFL schedule, streaming - The Courier-Journal",
+      "link": "https://news.google.com/rss/articles/CBMiggJBVV95cUxPR1Npb3hfUUFkRTZTelU5RUM1S2J5aTA5em1lNWF2QkpVSzlPcWEyWU1za0RaMzR1RHhaaUUzZEV1SUwxS3R0d3ZUYzRQUlRXdDF5YUtEbU9YNUdlaGhqZVR5YXp2NGVWa0Z1WVA3ei1NV3JUMG5Ed0tQRjRTRm1YQmVtU0J4ZS15bE4xVjhtTU1OWTVUWm9XTUwzS1pmcXMyZ0xDVWRQN0RNdGtGTVpCaWFHX2FTUXZEMTlBZUpsMzlZWmZRQnFLTXk4UUx3ZmtvYW0zLVNSVmpub19zRFFYeEgxNmsxUWJZb2laQ1Q5YTIwZGhhQWEzRktOWVhVR1BxR0E?oc=5",
+      "published": "2025-09-07T17:00:00+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "65b9617e97740370c5e061837985cba8",
+      "title": "Saints legend Terron Armstead leads pregame chant inside Caesars Superdome for Week 1 game vs. Cardinals - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOblkwTmdUTG9vYWVGZkgxYlJqaWUzOFlFYkJpa2NQaFNqSVFWdHYyNU1DNGpuVEx5NEttdkw5Z0JRcFJLYktUdmNMQlNBR0dST01xenptZTJ4WkFCTHVXY3dPU3ZlTld4QUpVYUJwVjdINWNpa1pKdkc2Y1Z3cVRRWm5hTTE3eTdXbk8tSllRc2ZnQW92NjJIQWVqTWpYbU1ZdWRRblJWcHRSaGpYTlZJak5UYw?oc=5",
+      "published": "2025-09-07T17:00:00+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "c57751b6a79dcfb59b2b63ab543e6a6a",
+      "title": "Kyler Murray injury: Arizona Cardinals gives unexpected health update on quarterback before the Saints game | Hindustan Times - Hindustan Times",
+      "link": "https://news.google.com/rss/articles/CBMihgJBVV95cUxQaU1IQmh2Z25FRXpYMFVtRExhVVZ4YkVCcllyUXRXUXg2ZEhzc3NhQVRYMGNpdlhZeVJwbnZjYkxoYUd5Mm5KV3F5MHBxa0dzN3F1Z0JMVVROTC0tVExqUnhIaVVxUmVMN0dPVFlacjRTTEhSNjVYc2k2UV8yVXk4bjV2X0tTaTgtV3JzQng0ci02UFp2REJiZjFmZzNWa1lqWGdrMlJYVUdHdDNBOFVWbjFNOHE1U3N2UVV2bGVjNkVUbjR0OG83VDc0dnBzMWRFOVFVY0lOOEFFWGljSWd1Q2ZOWnRuVHQxdy1yYWIycDg4M09wU05TbUxaRWQ0MndOTUt5NG5B0gGLAkFVX3lxTFAzb2M1ZVlsYjZfdHppN0YzcHRNNG9MRlgtR09RaTVGNEUzQWMxQm1maUcxbjlVYjdfcGhGVlg2ak5DQzZmT09hOHp5Nl9EZ29MRHoyR3hmdWdEajhnaHBsSjh2OUVJRUFleVFfRjBjci1zLW1mUGp4SkgyV2dTTHRZcWN1MmlOal9oRkdEcjNDM2hlQ1RtVmFWdGwyWTZsUE9TTy10bHFtTzcyNTM4THNQOUdBeFk5NVM3cjdiTkF4ZzdFc0FEbjRrZkxJaXh1LTlxTUJzcVhXVlEyLWQ1MFQ0MEI5dU1CdmkzNzU5eUYxUmxuNzd1azZNREh3MEZzYmdHbmFTLTdXX0FGVQ?oc=5",
+      "published": "2025-09-07T16:49:24+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "35f8af86dd5f0908b4f948af2f0e29bf",
+      "title": "Week 1 Sunday games discussion",
+      "link": "https://sports.yahoo.com/article/week-1-sunday-games-discussion-164500348.html",
+      "published": "2025-09-07T16:45:00+00:00",
+      "source": "Yahoo Sports — Cardinals",
+      "source_id": "yahoo"
+    },
+    {
+      "id": "d450dfaae0f30f2e9dfbe48b9e7bd4ad",
+      "title": "Saints Pregame Huddle vs. Cardinals | 2025 NFL Week 1 - New Orleans Saints",
+      "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQYXJ0MVhzNG5vbml6enVmaHBRMFY5ZldYZ1RVaFFRQk9CRDQxSEMxYU1BcnRvN1p2bXZXZ1NTYTVtbWhhQVZpTlVTdVdUYWZVQVVMRy1wTU5xNmxwUTBlOWNjbWVrb2lwVFdBOGhic0dSY1M5MjV0ZGsxbmctOXFzcF84N2dscF9oWXJJd0lsZlRMaDl0a3phU3dWMUl6UGoxbnRSZjBwRXUxaXM?oc=5",
+      "published": "2025-09-07T16:35:37+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "f4a54ef44fdb93dbc76118d53b16108a",
+      "title": "Cardinals vs Saints live online: stats, scores and highlights | NFL Week 1 2025 - Diario AS",
+      "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQWEk4Y1FhQXpLdmszUUhKVkpBVWVwM2J5OWlxMkpwX3dtc0JwdnhCRzFxSUkxVzNiQ3VyX3BjMnZiMUxlT01nZ2JaNlFFOTljeDJPWERBdVRPQXZ0bTBfS2IzcFctNTlyRlhzY0pqblZtOExKZDJVNnVNeU9CRVhNQ2d5M0hJUGdUdWxoNVpISDV4alBkRWxTSF9VYnFLVDFtMFHSAbYBQVVfeXFMT2g4VVdrQjJzekdubTYyaVJZSHphTjhtTDZlWnNvaGQ0Mk5neks0YlNBcVhVTHEtRmZLRjZ4cVNuU3ZaQXBuNzh0bmRiWFB6b08wN2FQWEJfTWxlNUFKOEZoVlhzZU9KOWhuY3R6TktBcnE2bmtqcDVXSnUtODJ2TkcyQkw5ekpYVkpwYTdjWVZPNWtmeGRPWGduck1naENtbjQ2UHA5eWo0VzVJcDRXSk0ydFpvVGc?oc=5",
+      "published": "2025-09-07T16:30:00+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "85b783fbcc9406abcbf8809b67a72118",
+      "title": "WATCH New Orleans Saints vs Arizona Cardinals Live 𝗦𝗧𝗥𝗘𝗔𝗠 Free NFL Football Game 07/09/2025 - MooseJawToday.com",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQNG9jVHA3QnBoOWdoOFh4UDVaM1pJYjdlOWktcFNtby1GVV9tLVoySUNKZG1mNkpMX3pBYXl3Z0Z0QUZYeHdxMC1PY3NDYlEzWWVMY3hQM09kMnFyU3RUSVYzM0dBQ2VuVnVFZFREd3o2SXhrWjhTdWhTRm5qRVp1Z2w0R2JBNl9hRVVqNlFn?oc=5",
+      "published": "2025-09-07T16:25:38+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    },
+    {
+      "id": "df81fe2e4d330745162b7c705f4e92cb",
+      "title": "Week 1 inactives: Who's in and who's out?",
+      "link": "https://www.espn.com/fantasy/football/story/_/page/FFSundayInactives-46069950/nfl-fantasy-football-espn-injured-inactives-watchlist-week-1-2025-september-7",
+      "published": "2025-09-07T16:22:56+00:00",
+      "source": "ESPN — Cardinals",
+      "source_id": "espn"
+    },
+    {
+      "id": "7ec137de235816e63a8bfbecda631db3",
+      "title": "Last-minute Week 1 intel from NFL experts: Why the Lions could win, plus surprises and fantasy sleepers",
+      "link": "https://www.espn.com/nfl/story/_/id/46139642/2025-nfl-week-1-predictions-fantasy-sleepers-upsets-bets-stats-matchups",
+      "published": "2025-09-07T16:12:29+00:00",
+      "source": "ESPN — Cardinals",
+      "source_id": "espn"
+    },
+    {
+      "id": "983132c9af14888052570d3205ab223b",
+      "title": "Questions, takeaways off every NFL Week 1 game: Have the Colts found their QB? Are the Chiefs in trouble?",
+      "link": "https://www.espn.com/nfl/story/_/id/46139954/nfl-week-1-2025-season-questions-takeaways-lessons-stats-recap-every-game",
+      "published": "2025-09-07T16:08:50+00:00",
+      "source": "ESPN — Cardinals",
+      "source_id": "espn"
+    },
+    {
+      "id": "fcf5294c19eaa261d217afc97ae05d19",
+      "title": "Cardinals-Saints first half open thread - Revenge of the Birds",
+      "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxObWVhdWtWeG1VNkhGSndoYUlvRXFtbDhUWnJUNFh1ZkZVZ2ZINHJmVnpIRFVwaHFfZVRvZGJzVGdTOEQyQ1ZVb2duLXBXVnBGeUZaMnJDcFl1NDNWTVJlRDNyY2U0NEpmZVZfbnJYMG5aaVhlLWZJeDVvMTJSVmpMUUZUN3BEOHR2V0x5TkF5Yk03NTF4bGF4VW5Xa2k?oc=5",
+      "published": "2025-09-07T16:02:46+00:00",
+      "source": "Google News — Arizona Cardinals",
+      "source_id": "gnews"
+    }
+  ]
 }
