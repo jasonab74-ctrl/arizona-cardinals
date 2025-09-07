@@ -1,131 +1,127 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arizona Cardinals — News</title>
-<link rel="manifest" href="/static/manifest.webmanifest">
-<link rel="icon" href="/static/favicon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
-<meta name="theme-color" content="#97233F">
-<style>
-  :root{
-    --primary:#97233F;      /* Cardinals red */
-    --accent:#FFB612;       /* Cardinals gold/yellow accent */
-    --ink:#e9e9e9;
-    --muted:#9aa0a6;
-    --card:#1e1f22;
-    --bg:#0f1012;
-    --chip:#26282c;
-    --chip-border:#31343a;
-  }
-  html,body{margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif}
-  header{
-    padding:28px 20px 18px;
-    background:linear-gradient(180deg, rgba(151,35,63,.9), rgba(151,35,63,.35));
-    border-bottom:3px solid var(--accent);
-  }
-  .row{display:flex;gap:16px;align-items:center}
-  .logo{width:64px;height:64px;border-radius:12px;background:#fff url("/static/logo.png") center/contain no-repeat}
-  h1{margin:0;font-size:36px;line-height:1.05;font-weight:800}
-  .sub{margin-top:6px;color:var(--muted);font-weight:500}
-  .wrap{max-width:980px;margin:0 auto;padding:16px}
-  .bar{display:flex;gap:16px;align-items:center;background:#0f1012;border:1px solid var(--chip-border);border-radius:16px;padding:12px 14px;margin-top:12px}
-  label{color:var(--muted);font-weight:600;margin-right:8px}
-  select{background:var(--chip);border:1px solid var(--chip-border);color:var(--ink);padding:8px 10px;border-radius:10px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
-  .card{background:var(--card);border:1px solid var(--chip-border);border-radius:14px;padding:14px}
-  .card a{color:var(--ink);text-decoration:none}
-  .source{color:var(--muted);font-size:13px;margin-top:8px}
-  .chips{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
-  .chip{
-    background:var(--chip);border:1px solid var(--chip-border);padding:10px 14px;border-radius:999px;
-    font-weight:700;display:inline-block
-  }
-  footer{color:var(--muted);text-align:center;padding:40px 0 60px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arizona Cardinals — News</title>
+
+  <!-- PWA / icons (optional but harmless if present) -->
+  <link rel="icon" href="static/favicon.ico">
+  <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
+  <link rel="manifest" href="static/manifest.webmanifest">
+
+  <!-- THE IMPORTANT PART: make sure the stylesheet path is correct -->
+  <link rel="stylesheet" href="static/style.css?v=9" />
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="row">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <h1>Arizona Cardinals — News</h1>
+  <header class="hero hero-cards">
+    <div class="brand">
+      <img src="static/logo.png" alt="Arizona Cardinals logo" class="brand-logo" />
+      <div class="brand-title">
+        <h1>Arizona Cardinals — <span>News</span></h1>
         <div class="sub">Live feed • auto-updates</div>
       </div>
     </div>
+  </header>
 
-    <!-- Quick links (buttons) -->
-    <div class="chips">
-      <a class="chip" href="https://www.azcardinals.com/schedule/" target="_blank">Schedule</a>
-      <a class="chip" href="https://www.azcardinals.com/team/players-roster/" target="_blank">Roster</a>
-      <a class="chip" href="https://www.espn.com/nfl/team/depth/_/name/ari" target="_blank">Depth Chart</a>
-      <a class="chip" href="https://www.cbssports.com/nfl/teams/ARI/arizona-cardinals/injuries/" target="_blank">Injury Report</a>
-      <a class="chip" href="https://www.ticketmaster.com/arizona-cardinals-tickets/artist/805908" target="_blank">Tickets</a>
-      <a class="chip" href="https://shop.azcardinals.com/" target="_blank">Team Shop</a>
-      <a class="chip" href="https://www.reddit.com/r/azcardinals/" target="_blank">Reddit</a>
-      <a class="chip" href="https://bleacherreport.com/arizona-cardinals" target="_blank">Bleacher Report</a>
-      <a class="chip" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals" target="_blank">ESPN Team</a>
-      <a class="chip" href="https://sports.yahoo.com/nfl/teams/ari/" target="_blank">Yahoo Team</a>
-      <a class="chip" href="https://www.pff.com/nfl/teams/arizona-cardinals" target="_blank">PFF Team Page</a>
-      <a class="chip" href="https://www.pro-football-reference.com/teams/crd/" target="_blank">Pro-Football-Reference</a>
-      <a class="chip" href="https://www.nfl.com/news/power-rankings" target="_blank">NFL Power Rankings</a>
-      <a class="chip" href="https://www.teamrankings.com/nfl/team/arizona-cardinals" target="_blank">Stats</a>
-      <a class="chip" href="https://www.espn.com/nfl/standings" target="_blank">Standings</a>
-    </div>
-  </div>
-</header>
+  <main class="container">
+    <!-- Quick links -->
+    <nav class="quicklinks">
+      <a class="pill" href="https://www.azcardinals.com/schedule/">Schedule</a>
+      <a class="pill" href="https://www.azcardinals.com/team/players-roster/">Roster</a>
+      <a class="pill" href="https://www.espn.com/nfl/team/depth/_/name/ari">Depth Chart</a>
+      <a class="pill" href="https://www.azcardinals.com/team/injury-report/">Injury Report</a>
+      <a class="pill" href="https://www.ticketmaster.com/arizona-cardinals-tickets/artist/805907">Tickets</a>
+      <a class="pill" href="https://shop.azcardinals.com/">Team Shop</a>
+      <a class="pill" href="https://www.reddit.com/r/azcardinals/">Reddit</a>
+      <a class="pill" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals">ESPN Team</a>
+      <a class="pill" href="https://sports.yahoo.com/nfl/teams/ari/">Yahoo Team</a>
+      <a class="pill" href="https://www.pff.com/nfl/teams/arizona-cardinals">PFF Team Page</a>
+      <a class="pill" href="https://www.pro-football-reference.com/teams/crd/">Pro-Football-Reference</a>
+      <a class="pill" href="https://www.nfl.com/news/power-rankings">NFL Power Rankings</a>
+      <a class="pill" href="https://www.teamrankings.com/nfl/team/arizona-cardinals">Stats</a>
+      <a class="pill" href="https://www.espn.com/nfl/standings">Standings</a>
+    </nav>
 
-<main class="wrap">
-  <div class="bar">
-    <div><label for="srcSel">Source:</label>
-      <select id="srcSel"><option>All sources</option></select>
-    </div>
-    <div style="margin-left:auto">
-      <label>Updated:</label><span id="updated">—</span>
-    </div>
-  </div>
-  <div id="list" class="grid"></div>
-</main>
+    <!-- Controls -->
+    <section class="controls">
+      <div class="control">
+        <label for="sourceSel">Source:</label>
+        <select id="sourceSel">
+          <option value="all">All sources</option>
+        </select>
+      </div>
+      <div class="control right">
+        <label>Updated:</label>
+        <span id="updated">—</span>
+      </div>
+    </section>
 
-<footer>Powered by GitHub Pages</footer>
+    <!-- Articles -->
+    <section id="feed" class="feed"></section>
 
-<script>
-async function load(){
-  const res = await fetch('items.json?cache=' + Date.now());
-  const data = await res.json();
+    <footer class="foot">
+      <small>Powered by GitHub Pages</small>
+    </footer>
+  </main>
 
-  // Sources dropdown
-  const sel = document.getElementById('srcSel');
-  sel.innerHTML = '<option value="*">All sources</option>' +
-    data.sources.map(s => `<option>${s}</option>`).join('');
-  sel.addEventListener('change', render);
+  <script>
+    // Small helper to format dates
+    function fmt(d) {
+      try {
+        return new Date(d).toLocaleString();
+      } catch { return "—"; }
+    }
 
-  // Updated time
-  document.getElementById('updated').textContent =
-    new Date(data.updated_at).toLocaleString();
+    async function load() {
+      let data;
+      try {
+        const res = await fetch('items.json?cache=' + Date.now());
+        data = await res.json();
+      } catch {
+        // If items.json is missing, show a friendly message
+        document.getElementById('feed').innerHTML =
+          '<div class="empty">No articles yet — the collector will populate shortly.</div>';
+        return;
+      }
 
-  // Store then render
-  window.__items = data.items;
-  render();
-}
+      // Updated at
+      document.getElementById('updated').textContent =
+        data.updated_at ? fmt(data.updated_at) : '—';
 
-function render(){
-  const sel = document.getElementById('srcSel').value;
-  const items = (window.__items||[]).filter(i => sel==='*' || i.source===sel);
-  const html = items.map(i => `
-    <article class="card">
-      <a href="${i.link}" target="_blank" rel="noopener">
-        <h3>${i.title}</h3>
-        <div class="source">${i.source} • ${new Date(i.ts*1000).toLocaleString()}</div>
-      </a>
-    </article>
-  `).join('') || `<div style="color:var(--muted);padding:16px">No articles yet — the collector will populate shortly.</div>`;
-  document.getElementById('list').innerHTML = html;
-}
+      // Build sources dropdown
+      const sel = document.getElementById('sourceSel');
+      (data.sources || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.name;
+        sel.appendChild(opt);
+      });
 
-load();
-</script>
+      const render = () => {
+        const chosen = sel.value;
+        const feed = document.getElementById('feed');
+        const items = (data.items || []).filter(x =>
+          chosen === 'all' ? true : (x.source_id === chosen)
+        );
+        if (!items.length) {
+          feed.innerHTML = '<div class="empty">No articles yet — the collector will populate shortly.</div>';
+          return;
+        }
+        feed.innerHTML = items.map(x => `
+          <article class="card">
+            <a class="card-link" href="${x.link}" target="_blank" rel="noopener">
+              <h3 class="card-title">${x.title}</h3>
+              <div class="card-meta">${x.source} • ${fmt(x.published)}</div>
+            </a>
+          </article>
+        `).join('');
+      };
+
+      sel.addEventListener('change', render);
+      render();
+    }
+    load();
+  </script>
 </body>
 </html>
