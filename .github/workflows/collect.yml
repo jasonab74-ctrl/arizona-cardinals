@@ -1,44 +1,39 @@
-name: Collect news
+name: collect
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "*/30 * * * *"   # every 30 minutes
-  workflow_dispatch:
   push:
     paths:
-      - feeds.py
-      - collect.py
+      - "feeds.py"
+      - ".github/workflows/collect.yml"
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           python -m pip install feedparser python-dateutil
-      - name: Run collector
-        run: |
-          python collect.py
-          echo "---- items.json summary ----"
-          python - <<'PY'
-          import json, pathlib
-          d=json.loads(pathlib.Path("items.json").read_text(encoding="utf-8"))
-          print("items:", len(d.get("items",[])))
-          print("sources:", len(d.get("sources",[])))
-          print("updated_at:", d.get("updated_at"))
-PY
+
+      - name: Collect news
+        run: python feeds.py --team arizona-cardinals --limit 50
+
       - name: Commit items.json
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add items.json
-          git diff --cached --quiet || git commit -m "auto: refresh items.json"
+          git commit -m "update items.json (cards)" || echo "no changes"
           git push
