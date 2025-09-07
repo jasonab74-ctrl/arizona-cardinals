@@ -1,116 +1,133 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Arizona Cardinals — News</title>
-  <link rel="stylesheet" href="static/style.css" />
   <link rel="icon" href="static/favicon.ico">
   <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
-  <meta name="theme-color" content="#97233F">
+  <link rel="manifest" href="static/manifest.webmanifest">
+  <link rel="stylesheet" href="static/style.css">
+  <style>
+    :root{
+      --brand:#97233F; /* Cardinals red */
+      --brand-dark:#6f1b2e;
+      --ink:#e8e8ea;
+      --card:#111416;
+      --chip:#1b1f22;
+      --accent:#ffb612; /* gold beak */
+    }
+  </style>
 </head>
 <body>
   <header class="hero">
-    <div class="hero-left">
-      <img src="static/logo.png" alt="Arizona Cardinals" class="logo" />
-      <div>
-        <h1>Arizona Cardinals —<br/> News</h1>
-        <p class="sub">Live feed • auto-updates</p>
-      </div>
+    <img class="logo" src="static/logo.png" alt="Cardinals logo" />
+    <div class="title">
+      <h1>Arizona<br>Cardinals —<br>News</h1>
+      <div class="sub">Live feed • auto-updates</div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="controls">
+  <main class="wrap">
+    <section class="toolbar">
       <div>
         <label>Source:</label>
-        <select id="sourceFilter"></select>
+        <select id="srcSel"><option>All sources</option></select>
       </div>
-      <div>
-        <label>Updated:</label>
-        <span id="updated">—</span>
-      </div>
-    </div>
+      <div id="updated">Updated: —</div>
+    </section>
 
-    <div id="buttons" class="buttons"></div>
-    <div id="empty" class="empty" hidden>No articles yet — the collector will populate shortly.</div>
-    <div id="feed" class="grid"></div>
+    <nav id="links" class="chips"></nav>
+
+    <div id="notice" class="notice" hidden>New items available — tap to refresh</div>
+    <section id="list" class="cards">
+      <div class="empty">No articles yet — the collector will populate shortly.</div>
+    </section>
   </main>
 
-  <footer class="foot">Powered by GitHub Pages</footer>
+  <footer class="foot">
+    Powered by GitHub Pages
+  </footer>
 
   <script>
-  const FEED_URL = "items.json";
-  let cache = { items: [], sources: [], updated_at: null, links: [] };
+  const list = document.getElementById('list');
+  const srcSel = document.getElementById('srcSel');
+  const updated = document.getElementById('updated');
+  const linksBox = document.getElementById('links');
 
-  function el(tag, cls){ const e=document.createElement(tag); if(cls)e.className=cls; return e; }
-  function fmtDate(iso){
-    if(!iso) return "—";
-    const d = new Date(iso);
+  let DATA = null;
+
+  function fmtTime(ts){
+    if(!ts) return '';
+    const d = new Date(ts*1000);
     return d.toLocaleString();
   }
 
-  function renderButtons(links){
-    const box = document.getElementById("buttons"); box.innerHTML="";
-    links.forEach(l=>{
-      const a = el("a","pill"); a.href=l.url; a.target="_blank"; a.rel="noopener";
-      a.textContent=l.label; box.appendChild(a);
+  function render(){
+    if(!DATA) return;
+    // Updated stamp
+    const stamp = new Date(DATA.updated_at);
+    updated.textContent = 'Updated: ' + stamp.toLocaleString();
+
+    // Quick links
+    linksBox.innerHTML = '';
+    (DATA.links || []).forEach(l=>{
+      const a = document.createElement('a');
+      a.className = 'pill';
+      a.href = l.url; a.target = '_blank'; a.rel='noopener';
+      a.textContent = l.label;
+      linksBox.appendChild(a);
     });
+
+    // Sources dropdown
+    srcSel.innerHTML = '';
+    const optAll = document.createElement('option');
+    optAll.value = ''; optAll.textContent = 'All sources';
+    srcSel.appendChild(optAll);
+    (DATA.sources || []).forEach(s=>{
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s; srcSel.appendChild(o);
+    });
+
+    // Articles
+    drawCards();
   }
 
-  function renderSources(sources){
-    const sel = document.getElementById("sourceFilter");
-    sel.innerHTML = "";
-    const optAll = el("option"); optAll.value = ""; optAll.textContent = "All sources"; sel.appendChild(optAll);
-    sources.forEach(s=>{
-      const o = el("option"); o.value=s; o.textContent=s; sel.appendChild(o);
-    });
-    sel.onchange = ()=> renderFeed();
-  }
-
-  function renderFeed(){
-    const grid = document.getElementById("feed");
-    const empty = document.getElementById("empty");
-    grid.innerHTML = "";
-    let items = cache.items.slice();
-
-    const sel = document.getElementById("sourceFilter");
-    if(sel.value) items = items.filter(x => x.source === sel.value);
-
-    document.getElementById("updated").textContent = fmtDate(cache.updated_at);
-
-    if(!items.length){
-      empty.hidden = false; return;
+  function drawCards(){
+    const src = srcSel.value;
+    const items = (DATA.items || []).filter(x=>!src || x.source===src);
+    list.innerHTML = '';
+    if(items.length===0){
+      const d = document.createElement('div');
+      d.className='empty';
+      d.textContent='No articles match this filter.';
+      list.appendChild(d);
+      return;
     }
-    empty.hidden = true;
-
-    items.forEach(x=>{
-      const card = el("a","card"); card.href = x.url; card.target="_blank"; card.rel="noopener";
-      const h = el("div","title"); h.textContent = x.title; card.appendChild(h);
-      const m = el("div","meta");
-      m.textContent = `${x.source} • ${fmtDate(x.published_at)}`;
-      card.appendChild(m);
-      grid.appendChild(card);
+    items.forEach(it=>{
+      const a = document.createElement('a');
+      a.className='card'; a.href = it.link; a.target='_blank' ; a.rel='noopener';
+      a.innerHTML = `
+        <div class="title">${it.title}</div>
+        <div class="meta">${it.source}${it.published ? ' • ' + fmtTime(it.published) : ''}</div>
+      `;
+      list.appendChild(a);
     });
   }
+
+  srcSel.addEventListener('change', drawCards);
 
   async function load(){
-    try {
-      const r = await fetch(FEED_URL, { cache: "no-store" });
-      const data = await r.json();
-      cache = data;
-      renderButtons(data.links || []);
-      renderSources(data.sources || []);
-      renderFeed();
-    } catch (e){
-      console.warn("items.json not ready yet", e);
-      document.getElementById("empty").hidden = false;
-    }
+    const v = Date.now(); // bust cache
+    const res = await fetch('items.json?v='+v, {cache:'no-store'});
+    if(!res.ok){ return; }
+    DATA = await res.json();
+    render();
   }
 
   load();
-  // client auto-refresh
-  setInterval(load, 5 * 60 * 1000);
+  // client-side ping (5 min) to catch updates
+  setInterval(load, 5*60*1000);
   </script>
 </body>
 </html>
