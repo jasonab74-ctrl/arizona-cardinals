@@ -1,45 +1,44 @@
-name: Collect news (every 30m)
+name: Collect news
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/30 * * * *"   # every 30 minutes
   workflow_dispatch:
+  push:
+    paths:
+      - feeds.py
+      - collect.py
+
+permissions:
+  contents: write
 
 jobs:
-  collect:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install feedparser requests
-
+          python -m pip install feedparser python-dateutil
       - name: Run collector
         run: |
           python collect.py
-          echo "---- items.json preview ----"
+          echo "---- items.json summary ----"
           python - <<'PY'
           import json, pathlib
-          d = json.loads(pathlib.Path("items.json").read_text())
-          print("items:", len(d.get("items", [])))
-          print("sources:", len(d.get("sources", [])))
+          d=json.loads(pathlib.Path("items.json").read_text(encoding="utf-8"))
+          print("items:", len(d.get("items",[])))
+          print("sources:", len(d.get("sources",[])))
           print("updated_at:", d.get("updated_at"))
-          PY
-
+PY
       - name: Commit items.json
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add items.json
-          git commit -m "Auto update items.json" || echo "No changes"
+          git diff --cached --quiet || git commit -m "auto: refresh items.json"
           git push
