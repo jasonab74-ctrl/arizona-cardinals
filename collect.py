@@ -5,8 +5,8 @@ from pathlib import Path
 import feedparser, requests
 from feeds import FEEDS
 
-HERE = Path(__file__).parent
-ITEMS = HERE / "items.json"
+ROOT = Path(__file__).parent
+OUT = ROOT / "items.json"
 UA = "TeamNewsBot/1.0 (+github pages)"
 
 def http_get(url):
@@ -23,44 +23,41 @@ def unwrap(url):
         pass
     return url
 
-def is_trusted(name: str) -> bool:
-    return name.lower() in {
-        "cards wire (usa today)",
-        "si — all cardinals",
-        "revenge of the birds",
-        "profootballtalk — cardinals",
-        "yahoo sports — cardinals",
-        "cbs sports — cardinals",
-        "arizona sports — cardinals",
-    }
+TRUSTED = {
+    "cards wire (usa today)",
+    "si — all cardinals",
+    "revenge of the birds",
+    "profootballtalk — cardinals",
+    "yahoo sports — cardinals",
+    "cbs sports — cardinals",
+    "arizona sports — cardinals",
+}
 
-EXCLUDE = [r"\bmlb\b", r"\bbaseball\b", r"\bst\.?\s*lo(?:uis)?\b"]
+EXCLUDE = [r"\bmlb\b", r"\bbaseball\b"]
 INCLUDE = [r"\barizona\s+cardinals\b", r"\bcardinals\b", r"\baz\b"]
 
 def allow(title, summary, feed_name):
     text = f"{title} {summary}".lower()
     if any(re.search(p, text) for p in EXCLUDE):
         return False
-    if is_trusted(feed_name):
+    if feed_name.lower() in TRUSTED:
         return True
     return any(re.search(p, text, re.I) for p in INCLUDE)
 
-def source_of(entry, feed_name):
+def source_name(entry, fallback):
     try:
         s = entry.get("source") or {}
-        if s.get("title"):
-            return s["title"]
+        if s.get("title"): return s["title"]
     except Exception:
         pass
-    return feed_name
+    return fallback
 
-def published_ts(entry):
+def ts_of(entry):
     for k in ("published_parsed", "updated_parsed"):
-        if getattr(entry, k, None):
-            try:
-                return time.mktime(getattr(entry, k))
-            except Exception:
-                pass
+        v = getattr(entry, k, None)
+        if v:
+            try: return time.mktime(v)
+            except Exception: pass
     return time.time()
 
 def collect():
@@ -75,28 +72,25 @@ def collect():
         for e in parsed.entries:
             title = (e.get("title") or "").strip()
             link = unwrap((e.get("link") or "").strip())
-            if not title or not link: 
-                continue
-            if not allow(title, e.get("summary") or "", name):
-                continue
+            if not title or not link: continue
+            if not allow(title, e.get("summary") or "", name): continue
             key = hashlib.md5((link + "||" + title.lower()).encode()).hexdigest()
-            if key in seen:
-                continue
+            if key in seen: continue
             seen.add(key)
             items.append({
                 "title": title,
                 "url": link,
-                "source": source_of(e, name),
-                "ts": published_ts(e)
+                "source": source_name(e, name),
+                "ts": ts_of(e)
             })
     items.sort(key=lambda x: x["ts"], reverse=True)
     items = items[:50]
-    out = {
+    data = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "items": items,
         "sources": sorted({it["source"] for it in items})
     }
-    ITEMS.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    OUT.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 if __name__ == "__main__":
     collect()
