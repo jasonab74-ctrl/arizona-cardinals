@@ -4,93 +4,111 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Arizona Cardinals — News</title>
-  <link rel="icon" href="static/favicon-32.png">
+  <link rel="icon" href="static/favicon.ico">
   <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
-  <link rel="manifest" href="static/manifest.webmanifest">
+  <meta name="theme-color" content="#97233F">
   <style>
-    :root{--bg:#0d0f12;--card:#13171d;--text:#e9edf1;--muted:#9aa3ad;--accent:#a30d2a;--chip:#1b2129}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial}
-    header{padding:20px 16px;background:linear-gradient(180deg,#7a0d23, #5c0d1c 55%, transparent)}
-    h1{margin:0 0 8px 0;font-size:28px}
-    .pill{display:inline-block;padding:12px 18px;margin:10px 12px 0 0;border-radius:28px;background:var(--chip);color:var(--text);text-decoration:none;font-weight:600;box-shadow:0 1px 0 rgba(255,255,255,.04) inset}
-    .row{padding:10px 16px 4px 16px}
-    .meta{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 16px;color:var(--muted)}
-    select{background:var(--chip);color:var(--text);border:1px solid #2a313a;border-radius:8px;padding:8px 10px}
-    .grid{padding:10px 16px 40px 16px}
-    .card{background:var(--card);border:1px solid #232a33;border-radius:14px;padding:16px;margin:10px 0}
-    .title{margin:0 0 6px 0;font-weight:800;font-size:20px}
-    .sub{color:var(--muted);font-size:14px}
-    footer{padding:28px 16px;color:var(--muted);text-align:center;border-top:1px solid #232a33}
+    :root{--bg:#0d1117;--panel:#0f1720;--card:#111a24;--text:#e6edf3;--muted:#9fb0c0;--accent:#97233F;--accent2:#FFB612;--border:#203040}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    header{background:linear-gradient(135deg,#0b1218,#0f1a24 70%);border-bottom:4px solid var(--accent);padding:16px 18px}
+    h1{margin:0;font-size:28px}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .pills{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px}
+    .pill{padding:9px 14px;border-radius:20px;background:var(--card);border:1px solid var(--border);font-weight:600}
+    .controls{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--panel)}
+    select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+    .updated{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:14px 16px}
+    .card{display:block;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:12px;transition:transform .06s}
+    .card:hover{transform:translateY(-2px);outline:2px solid var(--accent)}
+    .card h3{margin:0 0 6px 0;font-size:18px}
+    .meta{color:var(--muted);font-size:13px}
+    footer{color:var(--muted);text-align:center;padding:18px}
   </style>
 </head>
 <body>
   <header>
     <h1>Arizona Cardinals — News</h1>
-    <div id="quick" class="row"></div>
+    <div class="sub">Live feed • auto-updates</div>
   </header>
 
-  <div class="meta">
+  <nav id="links" class="pills"></nav>
+
+  <div class="controls">
     <div>
-      <b>Source:</b>
-      <select id="source"></select>
+      <label for="src">Source:</label>
+      <select id="src"><option value="">All sources</option></select>
     </div>
-    <div><b>Updated:</b> <span id="updated">—</span></div>
+    <div class="updated">Updated: <span id="updated">—</span></div>
   </div>
 
-  <main id="list" class="grid"></main>
+  <main id="feed" class="grid"></main>
+
   <footer>Powered by GitHub Pages</footer>
 
 <script>
-const qs = s => document.querySelector(s);
-const srcSel = qs('#source'), updatedEl = qs('#updated'), list = qs('#list');
-const ITEMS_URL = 'items.json?v=' + Date.now();
-const LINKS_URL = 'static/links.json?v=' + Date.now();
+const FEED_URL = 'items.json?v=' + Date.now();
 
-function fmtDate(iso){
+function fmtEpoch(sec){
+  try{ return new Date(sec*1000).toLocaleString(); }catch(e){ return '—'; }
+}
+function fmtISO(iso){
   if(!iso) return '—';
   const d = new Date(iso);
-  if(Number.isNaN(d.getTime())) return '—';
-  return d.toLocaleString();
+  return isNaN(d.getTime()) ? '—' : d.toLocaleString();
 }
 
 function renderLinks(links){
-  const box = qs('#quick');
+  const box = document.getElementById('links');
   box.innerHTML = (links||[]).map(l => `<a class="pill" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('');
 }
 
-function renderItems(data, filter){
-  const items = (data.items||[]).filter(it => !filter || filter==='__all__' || it.source===filter);
-  list.innerHTML = items.map(it => `
-    <a class="card" href="${it.url}" target="_blank" rel="noopener">
-      <div class="title">${it.title}</div>
-      <div class="sub">${it.source} • ${new Date(it.ts*1000).toLocaleString()}</div>
-    </a>
-  `).join('') || `<div class="sub" style="padding:16px">No articles yet.</div>`;
+function renderSources(sources){
+  const sel = document.getElementById('src');
+  sel.innerHTML = `<option value="">All sources</option>` + (sources||[]).sort().map(s=>`<option>${s}</option>`).join('');
 }
 
-function fillSources(sources){
-  const opts = ['<option value="__all__">All sources</option>']
-    .concat((sources||[]).map(s => `<option value="${s}">${s}</option>`));
-  srcSel.innerHTML = opts.join('');
+function renderItems(items){
+  const selVal = document.getElementById('src').value;
+  const list = document.getElementById('feed');
+  const filtered = (items||[]).filter(it => !selVal || it.source===selVal);
+  list.innerHTML = filtered.map(it => `
+    <a class="card" href="${it.link || it.url}" target="_blank" rel="noopener">
+      <h3>${it.title}</h3>
+      <div class="meta">${it.source} • ${fmtEpoch(it.published || it.ts || 0)}</div>
+    </a>
+  `).join('') || `<div class="meta">No articles yet — the collector will populate shortly.</div>`;
 }
 
 async function boot(){
-  // quick links
   try{
-    const lr = await fetch(LINKS_URL);
-    if(lr.ok){ renderLinks(await lr.json()); }
-  }catch(e){ /* ignore */ }
+    const res = await fetch(FEED_URL, {cache:'no-store'});
+    const data = await res.json();
 
-  // items
-  const resp = await fetch(ITEMS_URL);
-  const data = resp.ok ? await resp.json() : {items:[],sources:[],updated_at:null};
-  updatedEl.textContent = fmtDate(data.updated_at);
-  fillSources(data.sources);
-  renderItems(data,'__all__');
+    // buttons from items.json.links (mirrors STATIC_LINKS like on your Eagles site)
+    renderLinks(data.links || []);
 
-  srcSel.addEventListener('change', () => renderItems(data, srcSel.value));
+    // source dropdown
+    renderSources(data.sources || []);
+
+    // updated timestamp
+    document.getElementById('updated').textContent = fmtISO(data.updated_at);
+
+    // cards
+    renderItems(data.items || []);
+
+    // filter change
+    document.getElementById('src').addEventListener('change', ()=>renderItems(data.items||[]));
+  }catch(e){
+    document.getElementById('feed').innerHTML = `<div class="meta">items.json missing. Run the “Update Feeds” workflow once.</div>`;
+  }
 }
 boot();
+
+// refresh every 5 minutes (like Eagles)
+setInterval(boot, 5*60*1000);
 </script>
 </body>
 </html>
