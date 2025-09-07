@@ -1,4 +1,5 @@
-# collect.py — fetch feeds, dedupe, filter for ARIZONA CARDINALS (NFL), write items.json
+# collect.py — Arizona Cardinals (NFL) collector
+# Widely permissive, MLB-safe, deduped, 50 newest, writes items.json
 
 import json, re, time, hashlib, html, pathlib, urllib.parse
 from datetime import datetime, timezone
@@ -9,25 +10,20 @@ from feeds import FEEDS, STATIC_LINKS
 
 ROOT = pathlib.Path(__file__).parent
 OUT  = ROOT / "items.json"
-MAX_ITEMS = 50  # cap list
+MAX_ITEMS = 50
 
 # ---------- helpers
 
-DOMAIN_RE = re.compile(r"https?://([^/]+)/", re.I)
-
 def domain_of(url: str) -> str:
     try:
-        netloc = urllib.parse.urlparse(url).netloc.lower()
-        return netloc.replace("www.", "")
+        return urllib.parse.urlparse(url).netloc.lower().lstrip("www.")
     except Exception:
-        m = DOMAIN_RE.match(url or "")
-        return (m.group(1) if m else "").lower().replace("www.", "")
+        return ""
 
 def strip_tracking(u: str) -> str:
     try:
         p = urllib.parse.urlparse(u)
         q = urllib.parse.parse_qs(p.query)
-        # drop common tracking params
         drop = {"utm_source","utm_medium","utm_campaign","utm_term","utm_content","ito","iclid","fbclid","gclid","mc_cid","mc_eid"}
         q = {k:v for k,v in q.items() if k not in drop}
         new_q = urllib.parse.urlencode(q, doseq=True)
@@ -40,57 +36,47 @@ def norm_title(t: str) -> str:
     return re.sub(r"\s+", " ", (t or "").strip()).lower()
 
 def parse_when(entry):
-    # prefer published_parsed, fall back
     ts = None
-    if getattr(entry, "published_parsed", None):
-        ts = int(time.mktime(entry.published_parsed))
-    elif getattr(entry, "updated_parsed", None):
-        ts = int(time.mktime(entry.updated_parsed))
+    if entry.get("published_parsed"):
+        ts = int(time.mktime(entry["published_parsed"]))
+    elif entry.get("updated_parsed"):
+        ts = int(time.mktime(entry["updated_parsed"]))
     else:
         ts = int(time.time())
-    iso = datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
-    return ts, iso
+    return ts, datetime.fromtimestamp(ts, tz=timezone.utc).isoformat()
 
-# ---------- Cardinals filter (NFL) with MLB guard
+# ---------- filter (very forgiving but MLB-safe)
 
-NFL_REQUIRED_ANY = {
-    # strong exacts
-    "arizona cardinals", "az cardinals", "cards (nfl)",
-    # context hints
-    "nfl", "football", "nfc west",
-    # players/coaches (keep small, still helpful)
-    "kyler murray", "james conner", "marvin harrison jr", "trey mcbride",
-    "jonathan gannon", "paris johnson",
+TRUST = {
+    "azcardinals.com","nfl.com","espn.com","sports.yahoo.com","cardswire.usatoday.com",
+    "revengeofthebirds.com","azcentral.com","bleacherreport.com","news.google.com"
 }
 
-MLB_BLOCK = {
-    "st. louis cardinals", "st louis cardinals", "mlb", "baseball", "bally sports midwest",
-}
-
-TRUSTED_DOMAINS = {
-    "azcardinals.com", "nfl.com", "espn.com", "sports.yahoo.com", "cardswire.usatoday.com",
-    "revengeofthebirds.com", "azcentral.com", "bleacherreport.com",
-}
+MLB_BLOCK = {"st. louis cardinals","st louis cardinals","mlb","baseball"}
 
 def allow_item(title: str, summary: str, src_domain: str) -> bool:
     t = f"{title or ''} {summary or ''}".lower()
 
-    # MLB hard block
-    for bad in MLB_BLOCK:
-        if bad in t:
-            return False
+    # hard MLB guard
+    if any(b in t for b in MLB_BLOCK):
+        return False
 
-    # trusted domains pass (still MLB-guarded above)
-    if src_domain in TRUSTED_DOMAINS:
+    # trusted football-ish sources always pass
+    if src_domain in TRUST:
         return True
 
-    # strong exact mention
+    # explicit team mention
     if "arizona cardinals" in t or "az cardinals" in t:
         return True
 
-    # generic "cardinals" needs football context & NOT baseball
-    if "cardinals" in t and not any(bad in t for bad in MLB_BLOCK):
-        if any(tok in t for tok in NFL_REQUIRED_ANY):
+    # generic "cardinals" allowed if no MLB hints
+    if "cardinals" in t:
+        return True
+
+    # headlines like “Kyler Murray …” should pass
+    for name in ("kyler murray","james conner","marvin harrison jr","trey mcbride",
+                 "jonathan gannon","paris johnson"):
+        if name in t:
             return True
 
     return False
@@ -101,26 +87,30 @@ def fetch_rss(url: str):
     return feedparser.parse(url)
 
 def fetch_html_list(url: str):
-    # very small safety net for team/league HTML pages that don’t serve RSS.
-    # We try to scrape <a> titles; still filtered downstream.
+    # lightweight HTML fallback (league/team pages without RSS)
     try:
-        html_text = requests.get(url, timeout=15).text
+        resp = requests.get(url, timeout=15)
+        resp.raise_for_status()
+        html_text = resp.text
     except Exception:
         return []
 
     links = []
     for m in re.finditer(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', html_text, re.I|re.S):
-        href = m.group(1)
+        href = urllib.parse.urljoin(url, m.group(1))
         text = re.sub(r"<[^>]+>", "", m.group(2))
-        if len(text.strip()) < 15:
+        text = html.unescape(text).strip()
+        if len(text) < 20:
             continue
-        links.append({"link": urllib.parse.urljoin(url, href), "title": html.unescape(text)})
-    return links[:40]
+        links.append({"link": href, "title": text})
+        if len(links) >= 40:
+            break
+    return links
 
 # ---------- main
 
 def collect():
-    seen_keys = set()
+    seen = set()
     items = []
 
     for feed in FEEDS:
@@ -140,7 +130,6 @@ def collect():
                         "summary": "",
                         "published_parsed": None,
                         "updated_parsed": None,
-                        "source": name,
                     })
             else:
                 parsed = fetch_rss(url)
@@ -152,7 +141,6 @@ def collect():
                         "summary": getattr(e, "summary", "") or getattr(e, "description", ""),
                         "published_parsed": getattr(e, "published_parsed", None),
                         "updated_parsed": getattr(e, "updated_parsed", None),
-                        "source": name,
                     })
         except Exception:
             continue
@@ -168,9 +156,9 @@ def collect():
                 continue
 
             key = hashlib.sha1((norm_title(title) + "|" + link).encode("utf-8")).hexdigest()
-            if key in seen_keys:
+            if key in seen:
                 continue
-            seen_keys.add(key)
+            seen.add(key)
 
             ts, iso = parse_when(e)
             items.append({
@@ -181,23 +169,19 @@ def collect():
                 "published_iso": iso,
             })
 
-    # sort newest first, cap
     items.sort(key=lambda x: x["published"], reverse=True)
     items = items[:MAX_ITEMS]
 
-    sources = sorted({it["source"] for it in items})
-    updated_iso = datetime.now(timezone.utc).isoformat()
-
     payload = {
         "team": "Arizona Cardinals",
-        "updated_at": updated_iso,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
         "items": items,
-        "sources": sources,
+        "sources": sorted({it["source"] for it in items}),
         "links": STATIC_LINKS,
     }
 
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Wrote {OUT} with {len(items)} items and {len(sources)} sources at {updated_iso}")
+    print(f"Wrote {OUT} with {len(items)} items")
 
 if __name__ == "__main__":
     collect()
