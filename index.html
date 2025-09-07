@@ -1,115 +1,96 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Arizona Cardinals — News</title>
-  <link rel="manifest" href="static/manifest.webmanifest">
-  <link rel="icon" href="static/favicon.ico">
+  <link rel="icon" href="static/favicon-32.png">
   <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
-  <link rel="stylesheet" href="static/style.css">
+  <link rel="manifest" href="static/manifest.webmanifest">
+  <style>
+    :root{--bg:#0d0f12;--card:#13171d;--text:#e9edf1;--muted:#9aa3ad;--accent:#a30d2a;--chip:#1b2129}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial}
+    header{padding:20px 16px;background:linear-gradient(180deg,#7a0d23, #5c0d1c 55%, transparent)}
+    h1{margin:0 0 8px 0;font-size:28px}
+    .pill{display:inline-block;padding:12px 18px;margin:10px 12px 0 0;border-radius:28px;background:var(--chip);color:var(--text);text-decoration:none;font-weight:600;box-shadow:0 1px 0 rgba(255,255,255,.04) inset}
+    .row{padding:10px 16px 4px 16px}
+    .meta{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 16px;color:var(--muted)}
+    select{background:var(--chip);color:var(--text);border:1px solid #2a313a;border-radius:8px;padding:8px 10px}
+    .grid{padding:10px 16px 40px 16px}
+    .card{background:var(--card);border:1px solid #232a33;border-radius:14px;padding:16px;margin:10px 0}
+    .title{margin:0 0 6px 0;font-weight:800;font-size:20px}
+    .sub{color:var(--muted);font-size:14px}
+    footer{padding:28px 16px;color:var(--muted);text-align:center;border-top:1px solid #232a33}
+  </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="brand">
-      <img src="static/logo.png" alt="Cardinals" class="logo">
-      <div>
-        <h1>Arizona Cardinals — News</h1>
-        <div class="sub">Live team feed • auto‑updates</div>
-      </div>
-    </div>
+  <header>
+    <h1>Arizona Cardinals — News</h1>
+    <div id="quick" class="row"></div>
   </header>
 
-  <nav id="quick-links" class="pills"></nav>
-
-  <section class="controls">
-    <div class="row">
-      <label for="sourceSel">Source:</label>
-      <select id="sourceSel"><option>All sources</option></select>
-      <div class="updated"><span>Updated:</span> <time id="updated">—</time></div>
+  <div class="meta">
+    <div>
+      <b>Source:</b>
+      <select id="source"></select>
     </div>
-  </section>
+    <div><b>Updated:</b> <span id="updated">—</span></div>
+  </div>
 
-  <main id="feed" class="cards"></main>
-
-  <footer class="footer">
-    <a href="https://github.com" target="_blank" rel="noopener">Powered by GitHub Pages</a>
-  </footer>
+  <main id="list" class="grid"></main>
+  <footer>Powered by GitHub Pages</footer>
 
 <script>
-const fmtTime = (ts) => {
-  const d = new Date(ts * 1000);
-  return d.toLocaleString([], {month:'numeric', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit'});
-};
+const qs = s => document.querySelector(s);
+const srcSel = qs('#source'), updatedEl = qs('#updated'), list = qs('#list');
+const ITEMS_URL = 'items.json?v=' + Date.now();
+const LINKS_URL = 'static/links.json?v=' + Date.now();
 
-let DATA = null;
-
-async function loadData() {
-  const res = await fetch('items.json?v=' + Date.now(), {cache:'no-store'});
-  DATA = await res.json();
-  document.getElementById('updated').textContent = new Date(DATA.updated_at).toLocaleString();
-  buildSources();
-  buildQuickLinks();
-  render();
+function fmtDate(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleString();
 }
 
-function buildQuickLinks() {
-  // populated from window.STATIC_LINKS (injected below by fetch)
+function renderLinks(links){
+  const box = qs('#quick');
+  box.innerHTML = (links||[]).map(l => `<a class="pill" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('');
 }
 
-function buildSources() {
-  const sel = document.getElementById('sourceSel');
-  sel.innerHTML = '';
-  const optAll = document.createElement('option');
-  optAll.value = '';
-  optAll.textContent = 'All sources';
-  sel.appendChild(optAll);
-  (DATA.sources || []).forEach(s => {
-    const o = document.createElement('option');
-    o.value = s;
-    o.textContent = s;
-    sel.appendChild(o);
-  });
-  sel.addEventListener('change', render);
+function renderItems(data, filter){
+  const items = (data.items||[]).filter(it => !filter || filter==='__all__' || it.source===filter);
+  list.innerHTML = items.map(it => `
+    <a class="card" href="${it.url}" target="_blank" rel="noopener">
+      <div class="title">${it.title}</div>
+      <div class="sub">${it.source} • ${new Date(it.ts*1000).toLocaleString()}</div>
+    </a>
+  `).join('') || `<div class="sub" style="padding:16px">No articles yet.</div>`;
 }
 
-function render() {
-  const feed = document.getElementById('feed');
-  feed.innerHTML = '';
-  const selVal = document.getElementById('sourceSel').value;
-  const items = (DATA.items || []).filter(it => !selVal || it.source === selVal);
-  items.forEach(it => {
-    const card = document.createElement('a');
-    card.className = 'card';
-    card.href = it.link;
-    card.target = '_blank';
-    card.rel = 'noopener';
-    card.innerHTML = `
-      <h3>${it.title}</h3>
-      <div class="meta">${it.source} • ${fmtTime(it.published)}</div>
-    `;
-    feed.appendChild(card);
-  });
+function fillSources(sources){
+  const opts = ['<option value="__all__">All sources</option>']
+    .concat((sources||[]).map(s => `<option value="${s}">${s}</option>`));
+  srcSel.innerHTML = opts.join('');
 }
 
-async function loadLinks() {
-  // fetch STATIC_LINKS from feeds.py via a mirrored JSON endpoint (baked in below)
-  const res = await fetch('static/links.json?v=' + Date.now());
-  const links = await res.json();
-  const row = document.getElementById('quick-links');
-  links.forEach(l => {
-    const a = document.createElement('a');
-    a.href = l.url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.className = 'pill';
-    a.textContent = l.label;
-    row.appendChild(a);
-  });
-}
+async function boot(){
+  // quick links
+  try{
+    const lr = await fetch(LINKS_URL);
+    if(lr.ok){ renderLinks(await lr.json()); }
+  }catch(e){ /* ignore */ }
 
-loadLinks().then(loadData);
-setInterval(loadData, 5 * 60 * 1000); // refresh every 5 min
+  // items
+  const resp = await fetch(ITEMS_URL);
+  const data = resp.ok ? await resp.json() : {items:[],sources:[],updated_at:null};
+  updatedEl.textContent = fmtDate(data.updated_at);
+  fillSources(data.sources);
+  renderItems(data,'__all__');
+
+  srcSel.addEventListener('change', () => renderItems(data, srcSel.value));
+}
+boot();
 </script>
 </body>
 </html>
