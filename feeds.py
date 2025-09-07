@@ -1,11 +1,10 @@
-# feeds.py — Arizona Cardinals sources + buttons (balanced, reliable)
+# feeds.py — Arizona Cardinals sources + buttons
 
 FEEDS = [
     # Official / league
     {"name": "azcardinals.com", "url": "https://www.azcardinals.com/rss", "trusted": True},
-    {"name": "NFL.com — Arizona Cardinals (HTML)", "url": "https://www.nfl.com/teams/arizona-cardinals/news/", "is_html": True, "trusted": True},
 
-    # Major outlets with real team feeds
+    # National/team-specific
     {"name": "ESPN — Arizona Cardinals", "url": "https://www.espn.com/blog/arizona-cardinals/rss", "trusted": True},
     {"name": "Yahoo Sports — Arizona Cardinals", "url": "https://sports.yahoo.com/nfl/teams/ari/rss/"},
     {"name": "USA Today — Cardinals Wire", "url": "https://cardswire.usatoday.com/feed/", "trusted": True},
@@ -13,9 +12,9 @@ FEEDS = [
     {"name": "AZCentral — Cardinals", "url": "https://www.azcentral.com/sports/cardinals/rss/"},
     {"name": "Bleacher Report — Arizona Cardinals", "url": "https://bleacherreport.com/arizona-cardinals.rss"},
 
-    # High-signal Google News backups (never empty)
+    # Backstops so the page is never empty
     {"name": "Google News — \"Arizona Cardinals\"", "url": "https://news.google.com/rss/search?q=%22Arizona+Cardinals%22&hl=en-US&gl=US&ceid=US:en"},
-    {"name": "Google News — Cardinals site:azcardinals.com", "url": "https://news.google.com/rss/search?q=site:azcardinals.com+Cardinals&hl=en-US&gl=US&ceid=US:en"},
+    {"name": "Google News — Kyler Murray", "url": "https://news.google.com/rss/search?q=%22Kyler+Murray%22+Cardinals&hl=en-US&gl=US&ceid=US:en"},
 ]
 
 STATIC_LINKS = [
@@ -33,5 +32,5 @@ STATIC_LINKS = [
     {"label": "Pro-Football-Reference","url": "https://www.pro-football-reference.com/teams/crd/"},
     {"label": "NFL Power Rankings","url": "https://www.nfl.com/news/power-rankings"},
     {"label": "Stats","url": "https://www.nfl.com/teams/arizona-cardinals/stats/"},
-    {"label": "Standings","url": "https://www.nfl.com/standings/league/2025/REG"},
+    {"label": "Standings","url": "https://www.nfl.com/standings/league/"},
 ]
