@@ -4,10 +4,6 @@ on:
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
-  push:
-    paths:
-      - "collect.py"
-      - "feeds.py"
 
 jobs:
   collect:
@@ -16,23 +12,29 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install feedparser==6.0.11
+          python -m pip install feedparser requests
+
       - name: Run collector
         run: |
           python collect.py
-          python - <<'PY'
+          python - << 'PY'
           import json, pathlib
-          d = json.loads(pathlib.Path("items.json").read_text(encoding="utf-8"))
+          p = pathlib.Path("items.json")
+          d = json.loads(p.read_text(encoding="utf-8"))
           print("items:", len(d.get("items", [])))
           print("sources:", len(d.get("sources", [])))
           print("updated_at:", d.get("updated_at"))
-PY
+          PY
+
       - name: Commit items.json
         run: |
           git config user.name "github-actions"
