@@ -8,6 +8,7 @@ on:
     paths:
       - "collect.py"
       - "feeds.py"
+      - "requirements.txt"
 
 jobs:
   collect:
@@ -35,7 +36,7 @@ jobs:
           import json, pathlib
           p = pathlib.Path("items.json")
           if not p.exists():
-            raise SystemExit("items.json not found after collector")
+            raise SystemExit("items.json not found")
           d = json.loads(p.read_text(encoding="utf-8"))
           print("items:", len(d.get("items", [])))
           print("sources:", len(d.get("sources", [])))
