@@ -1,158 +1,207 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Arizona Cardinals — News</title>
-
-  <!-- Icons / PWA (keep if you already have these files) -->
-  <link rel="icon" href="static/favicon.ico">
-  <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
+  <meta name="theme-color" content="#97233F" />
   <link rel="manifest" href="static/manifest.webmanifest">
-  <meta name="theme-color" content="#97233F"/>
+  <link rel="icon" href="static/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
 
-  <!-- Minimal built-in styles so this works even if style.css is missing -->
   <style>
     :root{
-      --brand:#97233F; --brand2:#ffb612; --bg:#0d1117; --panel:#0f1620;
-      --card:#111a24; --text:#e6edf3; --muted:#9fb0c0; --border:#223548;
+      --bg:#0f0f12;
+      --card:#16181c;
+      --text:#e9eef5;
+      --muted:#a7b0bd;
+      --brand:#97233F;
+      --accent:#FFC20E;
+      --ring:rgba(151,35,63,.35);
+      --max:1024px;
+      --radius:16px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f7f9fc; --card:#ffffff; --text:#121417; --muted:#586173; }
     }
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--text);
-      font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;}
     a{color:inherit;text-decoration:none}
-    header{display:flex;gap:14px;align-items:center;padding:16px;border-bottom:4px solid var(--brand)}
-    header .logo{width:72px;height:72px;object-fit:contain;background:#0000;border-radius:10px}
-    header h1{margin:0;font-size:28px;line-height:1.05}
-    header .sub{color:var(--muted);font-size:14px;margin-top:4px}
-    .wrap{max-width:980px;margin:0 auto;padding:14px}
-    .controls{display:flex;gap:12px;align-items:center;justify-content:space-between;
-      padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--panel)}
-    select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
-    #links{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 14px}
-    .pill{display:inline-block;padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:600}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-    .card{display:block;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:12px}
-    .card:hover{outline:2px solid var(--brand)}
-    .title{font-size:18px;font-weight:800;margin:0 0 6px}
+    .wrap{max-width:var(--max);margin:0 auto;padding:16px;}
+    header{
+      background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 83%, #000 0%) 0%, transparent 70%);
+      padding:20px 0 10px;
+      border-bottom:3px solid color-mix(in oklab, var(--brand) 70%, #fff 0%);
+    }
+    .hero{display:flex;gap:16px;align-items:center;padding:8px 16px;}
+    .hero img{width:76px;height:76px;border-radius:14px;background:#fff;padding:10px;border:2px solid color-mix(in oklab, var(--brand) 70%, #000 0%);}
+    .title h1{margin:0;font-size: clamp(26px, 3.8vw, 40px);}
+    .title .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .bar{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid #00000022;border-radius:14px;padding:10px 12px;margin:12px 16px;}
+    select{appearance:none;background:transparent;color:var(--text);border:1px solid #00000033;border-radius:12px;padding:8px 36px 8px 12px;outline:none;position:relative}
+    select:focus{box-shadow:0 0 0 6px var(--ring);border-color:var(--brand)}
+    .updated{margin-left:auto;color:var(--muted);font-weight:600;white-space:nowrap}
+    .buttons{display:flex;flex-wrap:wrap;gap:12px;padding:4px 16px 6px}
+    .pill{
+      background:var(--card);border:1px solid #00000022;padding:10px 14px;border-radius:999px;
+      box-shadow:inset 0 0 0 1px #ffffff10;display:inline-flex;align-items:center;gap:8px;
+      transition:transform .06s ease, box-shadow .12s ease;
+    }
+    .pill:hover{transform:translateY(-1px);box-shadow:0 6px 14px #00000030,inset 0 0 0 1px var(--ring)}
+    .list{display:grid;gap:12px;padding:12px 16px 32px}
+    .card{
+      background:var(--card);border:1px solid #00000022;border-radius:16px;padding:14px 16px;
+      box-shadow:0 6px 24px #00000022, inset 0 0 0 1px #ffffff10;
+    }
+    .card h3{margin:0 0 6px;font-size:18px}
     .meta{color:var(--muted);font-size:13px}
-    .empty{color:var(--muted);padding:14px;border:1px dashed var(--border);border-radius:12px;margin:12px 0}
-    footer{color:var(--muted);text-align:center;padding:18px}
+    .empty{padding:24px 16px;color:var(--muted)}
+    footer{color:var(--muted);text-align:center;padding:24px}
+    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0;margin:-1px}
   </style>
 </head>
 <body>
   <header>
-    <img class="logo" src="static/logo.png" alt="Arizona Cardinals logo">
-    <div>
-      <h1>Arizona Cardinals — News</h1>
-      <div class="sub">Live feed • auto-updates</div>
+    <div class="wrap hero">
+      <img src="static/logo.png" alt="Arizona Cardinals logo" />
+      <div class="title">
+        <h1>Arizona Cardinals — News</h1>
+        <div class="sub">Live feed • auto-updates</div>
+      </div>
+    </div>
+
+    <div class="wrap buttons" id="buttons"></div>
+
+    <div class="bar wrap">
+      <label class="sr-only" for="src">Source</label>
+      <span>Source:</span>
+      <select id="src"><option>All sources</option></select>
+      <div class="updated"><span>Updated:</span> <time id="updated">—</time></div>
     </div>
   </header>
 
-  <div class="wrap">
-    <div class="controls">
-      <div>
-        <label for="src">Source:</label>
-        <select id="src"><option value="">All sources</option></select>
-      </div>
-      <div class="meta">Updated: <span id="updated">—</span></div>
-    </div>
-
-    <!-- Quick link buttons -->
-    <nav id="links"></nav>
-
-    <!-- Articles -->
+  <main class="wrap">
+    <div id="list" class="list"></div>
     <div id="empty" class="empty" hidden>No articles yet — the collector will populate shortly.</div>
-    <main id="feed" class="grid"></main>
-  </div>
+  </main>
 
   <footer>Powered by GitHub Pages</footer>
 
-<script>
-/**
- * This index is schema-flexible. It supports either:
- *  - items[].link or items[].url
- *  - items[].published (epoch seconds) or items[].published_at / published_iso (ISO)
- *  - data.links for buttons; data.sources for dropdown; data.updated_at ISO
- */
-const FEED_URL = 'items.json?v=' + Date.now();
+  <script>
+    // These are injected by the Python collector via items.json
+    const STAMP = Date.now();
+    const ITEMS_URL = `items.json?v=${STAMP}`;
 
-function fmtEpoch(sec){
-  if(!sec && sec !== 0) return null;
-  try{ return new Date(sec*1000).toLocaleString(); }catch(e){ return null; }
-}
-function fmtISO(iso){
-  try{
-    if(!iso) return null;
-    const d = new Date(iso);
-    return isNaN(d.getTime()) ? null : d.toLocaleString();
-  }catch(e){ return null; }
-}
-function bestTime(it){
-  // supports: published (epoch) | published_at (ISO) | published_iso (ISO)
-  return fmtEpoch(it.published) || fmtISO(it.published_at) || fmtISO(it.published_iso) || '';
-}
-function bestLink(it){
-  return it.link || it.url || '#';
-}
-function renderLinks(links){
-  const box = document.getElementById('links');
-  box.innerHTML = '';
-  (links||[]).forEach(l=>{
-    const a = document.createElement('a');
-    a.className='pill'; a.href=l.url; a.target='_blank'; a.rel='noopener';
-    a.textContent = l.label; box.appendChild(a);
-  });
-}
-function renderSources(sources){
-  const sel = document.getElementById('src');
-  sel.innerHTML = '<option value="">All sources</option>' + (sources||[]).sort().map(s=>`<option>${s}</option>`).join('');
-}
-function renderItems(items){
-  const grid = document.getElementById('feed');
-  const empty = document.getElementById('empty');
-  const selVal = document.getElementById('src').value;
+    // Fallback buttons & colors if the file isn’t present at first load.
+    const FALLBACK_BUTTONS = [
+      ["Schedule","https://www.azcardinals.com/schedule/"],
+      ["Roster","https://www.azcardinals.com/team/players-roster/"],
+      ["Depth Chart","https://www.ourlads.com/nfldepthcharts/depthchart/ARZ"],
+      ["Injury Report","https://www.azcardinals.com/team/injury-report/"],
+      ["Tickets","https://www.azcardinals.com/tickets/"],
+      ["Team Shop","https://shop.azcardinals.com/"],
+      ["Reddit","https://www.reddit.com/r/azcardinals/"],
+      ["Bleacher Report","https://bleacherreport.com/arizona-cardinals"],
+      ["ESPN Team","https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals"],
+      ["Yahoo Team","https://sports.yahoo.com/nfl/teams/ari/"],
+      ["PFF Team Page","https://www.pff.com/nfl/teams/arizona-cardinals"],
+      ["Pro-Football-Reference","https://www.pro-football-reference.com/teams/crd/"],
+      ["NFL Power Rankings","https://www.nfl.com/news/nfl-power-rankings"],
+      ["Stats","https://www.teamrankings.com/nfl/team/arizona-cardinals"],
+      ["Standings","https://www.nfl.com/standings/league/2024/REG"]
+    ];
 
-  const arr = (items||[]).filter(x => !selVal || x.source === selVal);
-  grid.innerHTML = '';
-  if(arr.length === 0){
-    empty.hidden = false;
-    return;
-  }
-  empty.hidden = true;
+    function $ (s,root=document){return root.querySelector(s)}
+    function $$ (s,root=document){return [...root.querySelectorAll(s)]}
 
-  grid.innerHTML = arr.map(it => `
-    <a class="card" href="${bestLink(it)}" target="_blank" rel="noopener">
-      <h3 class="title">${it.title}</h3>
-      <div class="meta">${it.source || ''}${bestTime(it) ? ' • ' + bestTime(it) : ''}</div>
-    </a>
-  `).join('');
-}
+    function renderButtons(buttons){
+      const box = $('#buttons'); box.innerHTML = '';
+      (buttons || FALLBACK_BUTTONS).forEach(([label,href])=>{
+        const a = document.createElement('a');
+        a.className = 'pill'; a.href = href; a.target = '_blank'; a.rel='noopener';
+        a.textContent = label;
+        box.appendChild(a);
+      });
+    }
 
-async function boot(){
-  try{
-    const res = await fetch(FEED_URL, {cache:'no-store'});
-    const data = await res.json();
+    function renderSources(sources){
+      const sel = $('#src');
+      sel.innerHTML = '<option value="*">All sources</option>';
+      (sources || []).forEach(name=>{
+        const o = document.createElement('option');
+        o.value = name; o.textContent = name;
+        sel.appendChild(o);
+      });
+    }
 
-    // buttons + sources + updated
-    renderLinks(data.links || []);
-    renderSources(data.sources || []);
-    const updated = fmtISO(data.updated_at) || fmtEpoch(data.updated) || '—';
-    document.getElementById('updated').textContent = updated;
+    function niceDate(iso){
+      try{
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return '—';
+        return d.toLocaleString([], {year:'numeric',month:'numeric',day:'numeric', hour:'numeric',minute:'2-digit'});
+      }catch{ return '—';}
+    }
 
-    // items
-    renderItems(data.items || []);
+    function renderArticles(items){
+      const list = $('#list'), empty = $('#empty');
+      list.innerHTML = '';
+      if(!items || !items.length){ empty.hidden = false; return; }
+      empty.hidden = true;
+      items.forEach(it=>{
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3><a href="${it.url}" target="_blank" rel="noopener">${it.title}</a></h3>
+          <div class="meta">${it.source} • ${niceDate(it.published)}</div>
+        `;
+        list.appendChild(card);
+      });
+    }
 
-    // filter handler
-    document.getElementById('src').onchange = ()=>renderItems(data.items || []);
-  }catch(err){
-    document.getElementById('empty').hidden = false;
-    document.getElementById('empty').textContent = 'items.json missing. Run your Update Feeds workflow once.';
-  }
-}
-boot();
-// client auto-refresh every 5 minutes
-setInterval(boot, 5*60*1000);
-</script>
+    async function load(){
+      try{
+        const res = await fetch(ITEMS_URL, {cache:'no-store'});
+        if(!res.ok) throw new Error('items.json missing yet');
+        const data = await res.json();
+
+        // buttons & colors (if present)
+        if (data.buttons) renderButtons(data.buttons);
+        else renderButtons();
+
+        if (data.theme && data.theme.primary){
+          document.querySelector('meta[name=theme-color]').setAttribute('content', data.theme.primary);
+          document.documentElement.style.setProperty('--brand', data.theme.primary);
+          if (data.theme.dark) document.documentElement.style.setProperty('--bg', data.theme.dark);
+          if (data.theme.accent) document.documentElement.style.setProperty('--accent', data.theme.accent);
+        }
+
+        // sources + items
+        renderSources(data.sources || []);
+        $('#updated').textContent = data.updated_at ? niceDate(data.updated_at) : '—';
+
+        const byNewest = (data.items || []).slice().sort((a,b)=>new Date(b.published)-new Date(a.published));
+        renderArticles(byNewest);
+
+        // filtering
+        $('#src').addEventListener('change', e=>{
+          const sel = e.target.value;
+          const items = sel==='*' ? byNewest : byNewest.filter(i=>i.source===sel);
+          renderArticles(items);
+        });
+
+      }catch(err){
+        // First deploy (or collector hasn’t run yet): still render UI shell
+        renderButtons();
+        renderSources([]);
+        $('#updated').textContent = '—';
+        $('#empty').hidden = false;
+      }
+    }
+
+    load();
+
+    // auto-refresh the shell every 5 min to pick up new items.json (keeps it “live” on mobile home-screen too)
+    setInterval(load, 5 * 60 * 1000);
+  </script>
 </body>
 </html>
