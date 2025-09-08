@@ -1,65 +1,144 @@
-import json, time, hashlib, pathlib
+#!/usr/bin/env python3
+# Arizona Cardinals — collector (HARDENED: curated sources + guaranteed links/dates)
+
+import json, time, re, hashlib
+from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
 from datetime import datetime, timezone
-from dateutil import parser as dtparse
 import feedparser
+from feeds import FEEDS, STATIC_LINKS
 
-from feeds import TEAM, SOURCES, MAX_ITEMS
+MAX_ITEMS = 60
 
-OUT = pathlib.Path("items.json")
+# ---- Curated dropdown (8–10 high-quality sources) ----
+CURATED_SOURCES = [
+    "Arizona Cardinals",
+    "Arizona Sports",
+    "Revenge of the Birds",
+    "PHNX Cardinals",
+    "Cardinals Wire",
+    "ESPN",
+    "Yahoo Sports",
+    "Sports Illustrated",
+    "CBS Sports",
+    "The Athletic",
+]
 
-UA = "Mozilla/5.0 (NewsCollector; +https://github.com) feedparser"
+ALLOWED_SOURCES = set(CURATED_SOURCES)
 
-def norm_ts(dtstr):
-    if not dtstr:
-        return None
+# ---------------- utils ----------------
+
+def now_iso():
+    return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+
+def _host(u: str) -> str:
     try:
-        return int(dtparse.parse(dtstr).timestamp())
+        n = urlparse(u).netloc.lower()
+        for p in ("www.","m.","amp."):
+            if n.startswith(p): n = n[len(p):]
+        return n
     except Exception:
-        return None
+        return ""
 
-def fetch_feed(title, url):
-    d = feedparser.parse(url, request_headers={"User-Agent": UA})
-    items = []
-    for e in d.entries:
-        link = getattr(e, "link", None)
-        name = title
-        if not link:
+def canonical(u: str) -> str:
+    try:
+        p = urlparse(u)
+        keep = {"id","story","v","p"}
+        q = parse_qs(p.query)
+        q = {k:v for k,v in q.items() if k in keep}
+        p = p._replace(query=urlencode(q, doseq=True), fragment="", netloc=_host(u))
+        return urlunparse(p)
+    except Exception:
+        return u
+
+def hid(s: str) -> str:
+    return hashlib.sha1(s.encode("utf-8")).hexdigest()[:16]
+
+ALIASES = {
+    # locals
+    "azcardinals.com": "Arizona Cardinals",
+    "arizonasports.com": "Arizona Sports",
+    "revengeofthebirds.com": "Revenge of the Birds",
+    "gophnx.com": "PHNX Cardinals",
+    "cardswire.usatoday.com": "Cardinals Wire",
+    # nationals
+    "espn.com": "ESPN",
+    "sports.yahoo.com": "Yahoo Sports",
+    "si.com": "Sports Illustrated",
+    "cbssports.com": "CBS Sports",
+    "theathletic.com": "The Athletic",
+}
+
+KEEP = [r"\bCardinals\b", r"\bArizona\b", r"\bAZ\b"]
+DROP = [r"\bwomen'?s\b", r"\bWBB\b", r"\bvolleyball\b", r"\bbasketball\b", r"\bbaseball\b"]
+
+def text_ok(title: str, summary: str) -> bool:
+    t = f"{title} {summary}"
+    if not any(re.search(p, t, re.I) for p in KEEP): return False
+    if any(re.search(p, t, re.I) for p in DROP): return False
+    return True
+
+def parse_time(entry):
+    for key in ("published_parsed","updated_parsed"):
+        if entry.get(key):
+            try:
+                return time.strftime("%Y-%m-%dT%H:%M:%S%z", entry[key])
+            except Exception:
+                pass
+    return now_iso()  # fallback → dates always render
+
+def source_label(link: str, feed_name: str) -> str:
+    return ALIASES.get(_host(link), feed_name.strip())
+
+# ---------------- pipeline ----------------
+
+def fetch_all():
+    items, seen = [], set()
+    for f in FEEDS:
+        fname, furl = f["name"].strip(), f["url"].strip()
+        try:
+            parsed = feedparser.parse(furl)
+        except Exception:
             continue
-        published = getattr(e, "published", None) or getattr(e, "updated", None)
-        ts = norm_ts(published) or int(time.time())
-        items.append({
-            "source": name,
-            "title": getattr(e, "title", "(no title)"),
-            "link": link,
-            "published": published or "",
-            "ts": ts,
-        })
-    return items
+        for e in parsed.entries[:120]:
+            link = canonical((e.get("link") or e.get("id") or "").strip())
+            if not link: continue
+            key = hid(link)
+            if key in seen: continue
+
+            src = source_label(link, fname)
+            if src not in ALLOWED_SOURCES:
+                continue
+
+            title = (e.get("title") or "").strip()
+            summary = (e.get("summary") or e.get("description") or "").strip()
+            if not text_ok(title, summary): continue
+
+            items.append({
+                "id": key,
+                "title": title or "(untitled)",
+                "link": link,
+                "source": src,
+                "feed": fname,
+                "published": parse_time(e),
+                "summary": summary,
+            })
+            seen.add(key)
+
+    items.sort(key=lambda x: x["published"], reverse=True)
+    return items[:MAX_ITEMS]
+
+def write_items(items):
+    payload = {
+        "updated": now_iso(),
+        "items": items,
+        "links": STATIC_LINKS,       # buttons always present
+        "sources": CURATED_SOURCES,  # dropdown never disappears
+    }
+    with open("items.json", "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
 
 def main():
-    all_items = []
-    for title, url in SOURCES:
-        try:
-            all_items.extend(fetch_feed(title, url))
-        except Exception:
-            # survive bad feeds
-            continue
-
-    # Dedup by link, keep most recent
-    seen = {}
-    for it in all_items:
-        k = it["link"]
-        if k not in seen or it["ts"] > seen[k]["ts"]:
-            seen[k] = it
-    deduped = sorted(seen.values(), key=lambda x: x["ts"], reverse=True)[:MAX_ITEMS]
-
-    payload = {
-        "team": TEAM,
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "sources": [s for s, _ in SOURCES],
-        "items": deduped,
-    }
-    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_items(fetch_all())
 
 if __name__ == "__main__":
     main()
