@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-# Arizona Cardinals — collector (HARDENED: curated sources + guaranteed links/dates)
+# Arizona Cardinals — hardened collector
+# - Curated source list for dropdown (no random junk)
+# - Strict Cardinals/NFL filters (drops Suns/D-backs/Coyotes etc.)
+# - Always writes 'updated', 'links' and *string* 'sources' so UI never collapses
+# - Normalizes hosts and strips tracking query params so de-duping is stable
 
 import json, time, re, hashlib
 from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
@@ -9,24 +13,22 @@ from feeds import FEEDS, STATIC_LINKS
 
 MAX_ITEMS = 60
 
-# ---- Curated dropdown (8–10 high-quality sources) ----
+# ---- Curated dropdown (10 reliable Cards sources) ----
 CURATED_SOURCES = [
-    "Arizona Cardinals",
-    "Arizona Sports",
+    "AZCardinals.com",
+    "Arizona Republic / azcentral",
+    "Arizona Sports (98.7)",
     "Revenge of the Birds",
+    "Cards Wire",
     "PHNX Cardinals",
-    "Cardinals Wire",
     "ESPN",
     "Yahoo Sports",
     "Sports Illustrated",
     "CBS Sports",
-    "The Athletic",
 ]
-
 ALLOWED_SOURCES = set(CURATED_SOURCES)
 
 # ---------------- utils ----------------
-
 def now_iso():
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
 
@@ -42,6 +44,7 @@ def _host(u: str) -> str:
 def canonical(u: str) -> str:
     try:
         p = urlparse(u)
+        # keep only stable params; drop tracking
         keep = {"id","story","v","p"}
         q = parse_qs(p.query)
         q = {k:v for k,v in q.items() if k in keep}
@@ -54,22 +57,30 @@ def hid(s: str) -> str:
     return hashlib.sha1(s.encode("utf-8")).hexdigest()[:16]
 
 ALIASES = {
-    # locals
-    "azcardinals.com": "Arizona Cardinals",
-    "arizonasports.com": "Arizona Sports",
-    "revengeofthebirds.com": "Revenge of the Birds",
-    "gophnx.com": "PHNX Cardinals",
-    "cardswire.usatoday.com": "Cardinals Wire",
-    # nationals
-    "espn.com": "ESPN",
-    "sports.yahoo.com": "Yahoo Sports",
-    "si.com": "Sports Illustrated",
-    "cbssports.com": "CBS Sports",
-    "theathletic.com": "The Athletic",
+    "azcardinals.com":          "AZCardinals.com",
+    "azcentral.com":            "Arizona Republic / azcentral",
+    "arizonasports.com":        "Arizona Sports (98.7)",
+    "revengeofthebirds.com":    "Revenge of the Birds",
+    "cardswire.usatoday.com":   "Cards Wire",
+    "gophnx.com":               "PHNX Cardinals",
+    "espn.com":                 "ESPN",
+    "sports.yahoo.com":         "Yahoo Sports",
+    "si.com":                   "Sports Illustrated",
+    "cbssports.com":            "CBS Sports",
 }
 
-KEEP = [r"\bCardinals\b", r"\bArizona\b", r"\bAZ\b"]
-DROP = [r"\bwomen'?s\b", r"\bWBB\b", r"\bvolleyball\b", r"\bbasketball\b", r"\bbaseball\b"]
+# --------- content filters ----------
+KEEP = [
+    r"\bCardinals?\b", r"\bArizona Cardinals?\b", r"\bNFL\b",
+    r"\bKyler Murray\b", r"\bJonathan Gannon\b", r"\bMarvin Harrison\b",
+    r"\bBudda Baker\b", r"\bJames Conner\b", r"\bTrey McBride\b",
+]
+DROP = [
+    r"\bSuns\b", r"\bNBA\b", r"\bCoyotes\b", r"\bNHL\b",
+    r"\bDiamondbacks\b", r"\bD-?backs\b", r"\bMLB\b",
+    r"\bbaseball\b", r"\bbasketball\b", r"\bhockey\b", r"\bsoccer\b",
+    r"\bwomen'?s\b", r"\bWBB\b", r"\bvolleyball\b",
+]
 
 def text_ok(title: str, summary: str) -> bool:
     t = f"{title} {summary}"
@@ -84,13 +95,14 @@ def parse_time(entry):
                 return time.strftime("%Y-%m-%dT%H:%M:%S%z", entry[key])
             except Exception:
                 pass
-    return now_iso()  # fallback → dates always render
+    # fallback so dates always render
+    return now_iso()
 
 def source_label(link: str, feed_name: str) -> str:
+    # Map to a curated display label; fall back to feed name string
     return ALIASES.get(_host(link), feed_name.strip())
 
 # ---------------- pipeline ----------------
-
 def fetch_all():
     items, seen = [], set()
     for f in FEEDS:
@@ -99,15 +111,16 @@ def fetch_all():
             parsed = feedparser.parse(furl)
         except Exception:
             continue
-        for e in parsed.entries[:120]:
+        for e in parsed.entries[:140]:
             link = canonical((e.get("link") or e.get("id") or "").strip())
             if not link: continue
+
             key = hid(link)
             if key in seen: continue
 
             src = source_label(link, fname)
             if src not in ALLOWED_SOURCES:
-                continue
+                continue  # keeps dropdown clean/curated
 
             title = (e.get("title") or "").strip()
             summary = (e.get("summary") or e.get("description") or "").strip()
@@ -117,7 +130,7 @@ def fetch_all():
                 "id": key,
                 "title": title or "(untitled)",
                 "link": link,
-                "source": src,
+                "source": src,                 # STRING (not object)
                 "feed": fname,
                 "published": parse_time(e),
                 "summary": summary,
@@ -128,11 +141,12 @@ def fetch_all():
     return items[:MAX_ITEMS]
 
 def write_items(items):
+    # Ensure 'sources' is an array of STRINGS (prevents [object Object] in UI)
     payload = {
         "updated": now_iso(),
         "items": items,
-        "links": STATIC_LINKS,       # buttons always present
-        "sources": CURATED_SOURCES,  # dropdown never disappears
+        "links": STATIC_LINKS,                 # buttons always present
+        "sources": list(CURATED_SOURCES),      # frozen curated list
     }
     with open("items.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
