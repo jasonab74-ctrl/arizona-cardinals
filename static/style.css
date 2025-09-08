@@ -1,37 +1,65 @@
 :root{
-  --bg:#0f1115; --fg:#e8eaed; --muted:#9aa0a6;
-  --pill:#22252b; --pillText:#e8eaed;
-  --accent:#b71c1c; /* Cards primary */
-  --accent-2:#ffb300;
+  --primary:#97233F;      /* Cardinals red */
+  --accent:#000000;       /* black accent line */
+  --bg:#0a0a0a;
+  --card:#151515;
+  --pill:#e8e8e8;
+  --text:#f3f3f3;
+  --muted:#c9c9c9;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-a{color:inherit;text-decoration:none}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-.hero{background:linear-gradient(180deg,#7d0f22 0%, #58101a 100%);padding:20px 16px 8px;border-bottom:4px solid var(--accent-2)}
-.brand{display:flex;align-items:center;gap:12px}
-.brand-logo{width:64px;height:64px;border-radius:12px;background:#fff;object-fit:contain;padding:8px}
-.brand-title h1{margin:0;font-size:28px}
-.brand-title .sub{margin-top:4px;color:var(--muted)}
+/* ----- HEADER ----- */
+.hero{
+  display:flex; align-items:center; gap:14px;
+  padding:16px; background:var(--primary);
+  border-bottom:4px solid var(--accent);
+}
+.logo-box{
+  width:64px; height:64px; border-radius:12px; background:#fff;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.35);
+}
+.logo-box img{max-width:100%;max-height:100%;display:block}
 
-.container{max-width:920px;margin:0 auto;padding:12px 16px 48px}
+.hero-titles h1{margin:0;font-size:1.8rem;color:#fff;line-height:1.05}
+.hero-titles .sub{color:#f5e9ea;opacity:.9;font-size:.92rem}
 
-.quicklinks{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0 8px}
-.pill{display:inline-block;background:var(--pill);color:var(--pillText);padding:10px 16px;border-radius:28px;border:1px solid #333;box-shadow:0 1px 0 rgba(255,255,255,.05) inset}
-.pill:active{transform:translateY(1px)}
+/* Fight song button with play icon */
+.fight-btn{
+  margin-left:auto; display:inline-flex; align-items:center; gap:.5rem;
+  background:#ffffff; color:var(--primary);
+  text-decoration:none; padding:.6rem 1rem; border-radius:999px;
+  font-weight:800; font-size:.95rem; border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 1px 4px rgba(0,0,0,.28);
+  transition:transform .06s ease, background .2s ease, color .2s ease;
+}
+.fight-btn .icon{width:18px;height:18px;fill:var(--primary);flex:0 0 auto}
+.fight-btn:hover{background:#ffd166;color:#1a1a1a}
+.fight-btn:hover .icon{fill:#1a1a1a}
+.fight-btn:active{transform:translateY(1px)}
 
-.controls{display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px}
-.control{display:flex;align-items:center;gap:8px}
-.control label{color:var(--muted)}
-select{background:#1b1e24;color:var(--fg);border:1px solid #333;border-radius:10px;padding:8px 10px;appearance:none}
+/* ----- QUICK LINKS ----- */
+.pill-row{display:flex;flex-wrap:wrap;gap:.6rem;padding:12px}
+.pill{display:inline-block;padding:.55rem .9rem;border-radius:999px;background:var(--pill);color:#111;text-decoration:none;font-weight:800}
 
-.feed{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
-@media(min-width:720px){.feed{grid-template-columns:1fr 1fr}}
+/* ----- CONTROLS ----- */
+.controls{display:flex;justify-content:space-between;align-items:center;padding:8px 12px}
+.controls label{font-weight:800;margin-right:.4rem}
+#sourceSelect{padding:.45rem .6rem;border-radius:.6rem;border:1px solid #bdbdbd;background:#fff;color:#111}
 
-.card{background:#16191f;border:1px solid #2a2f36;border-radius:14px}
-.card-link{display:block;padding:14px}
-.card-title{margin:0 0 6px 0;font-size:18px}
-.card-meta{color:var(--muted);font-size:13px}
-.empty{color:var(--muted);padding:18px 8px}
+/* ----- CARDS ----- */
+main{padding:6px 12px 40px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin:10px 0}
+.title{font-weight:900;text-decoration:none;color:var(--text);display:block}
+.meta{color:var(--muted);margin-top:6px;font-size:.92rem}
 
-.foot{margin-top:22px;color:var(--muted);text-align:center}
+@media(min-width:768px){
+  main{max-width:860px;margin:0 auto}
+}
