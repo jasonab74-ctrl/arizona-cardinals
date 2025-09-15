@@ -1,28 +1,28 @@
-/* ===== Arizona Cardinals feed — stable dropdown + dates ===== */
+/* ===========================================================
+   Arizona Cardinals feed app (stable dropdown + dates)
+   =========================================================== */
 
-/* 8–10 fixed NFL sources for the dropdown (labels only; items come from items.json) */
+/* ----- 8–12 fixed Cardinals sources for a stable dropdown ----- */
 const SOURCES = [
   { key: 'All sources', label: 'All sources' },
   { key: 'Google News — Arizona Cardinals', label: 'Google News — Arizona Cardinals' },
-  { key: 'Yahoo Sports — Cardinals', label: 'Yahoo Sports — Cardinals' },
-  { key: 'azcardinals.com', label: 'azcardinals.com' },
-  { key: 'Revenge of the Birds', label: 'Revenge of the Birds' },
-  { key: 'Arizona Sports', label: 'Arizona Sports' },
-  { key: 'ESPN — Cardinals', label: 'ESPN — Cardinals' },
-  { key: 'CBS Sports — Cardinals', label: 'CBS Sports — Cardinals' },
-  { key: 'Cards Wire (USA Today)', label: 'Cards Wire (USA Today)' },
-  { key: 'ProFootballTalk — Cardinals', label: 'ProFootballTalk — Cardinals' }
+  { key: 'Yahoo Sports — Cardinals',      label: 'Yahoo Sports — Cardinals' },
+  { key: 'ESPN — Cardinals',              label: 'ESPN — Cardinals' },
+  { key: 'azcardinals.com',               label: 'azcardinals.com' },
+  { key: 'Arizona Sports',                label: 'Arizona Sports' },
+  { key: 'USA Today — Cards Wire',        label: 'USA Today — Cards Wire' },
+  { key: 'Revenge of the Birds',          label: 'Revenge of the Birds' },
+  { key: 'The Athletic',                  label: 'The Athletic' },
+  { key: 'ProFootballTalk',               label: 'ProFootballTalk' }
 ];
 
-/* DOM handles */
-const feedEl     = document.getElementById('feed');
-const sel        = document.getElementById('sourceSelect');
-const updatedEl  = document.getElementById('updatedAt');
-const songBtn    = document.getElementById('songBtn');
-const fightAudio = document.getElementById('fightAudio');
+/* DOM */
+const feedEl    = document.getElementById('feed');
+const sel       = document.getElementById('sourceSelect');
+const updatedEl = document.getElementById('updatedAt');
 
-/* Build stable dropdown */
-(function buildDropdown() {
+/* Build dropdown from the fixed list (prevents “roll back”) */
+(function buildDropdown(){
   sel.innerHTML = '';
   for (const s of SOURCES) {
     const opt = document.createElement('option');
@@ -33,61 +33,76 @@ const fightAudio = document.getElementById('fightAudio');
   sel.value = 'All sources';
 })();
 
-/* Load items.json (cache-busted so GH Pages doesn’t serve stale) */
-async function loadItems() {
-  const res = await fetch(`items.json?v=${Date.now().toString().slice(0,10)}`, { cache: 'no-store' });
+/* Load items.json (cache-bust to avoid old GH Pages cache) */
+async function loadItems(){
+  const cacheBust = `?v=${Date.now().toString().slice(0,10)}`;
+  const res = await fetch(`items.json${cacheBust}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return Array.isArray(data) ? data : (data.items || []);
+  const items = await res.json();
+  return Array.isArray(items) ? items : (items.items || []);
 }
 
-/* Date helpers: accept isoDate / date / pubDate in a variety of shapes */
-function parseDate(d) {
+/* Robust date parsing */
+function parseDate(d){
   if (!d) return null;
-  const s = typeof d === 'string' ? d.replace(/\sat\s/i, ' ') : d;
-  const t = Date.parse(s);
+  const cleaned = typeof d === 'string' ? d.replace(/\sat\s/i, ' ') : d;
+  const t = Date.parse(cleaned);
   if (!Number.isNaN(t)) return new Date(t);
-  try { return new Date(s); } catch { return null; }
-}
-function fmtLocal(dt) {
-  const date = dt.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
-  const time = dt.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-  return `${date}, ${time}`;
+  try { return new Date(cleaned); } catch { return null; }
 }
 
-/* Render */
-let ALL = [];
-function render() {
+/* Friendly date like “Sep 7, 2025, 4:36 PM” */
+function formatLocal(d){
+  const dateStr = d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+  const timeStr = d.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' });
+  return `${dateStr}, ${timeStr}`;
+}
+
+/* Render feed (50 newest) */
+let allItems = [];
+function normalizeSource(s=''){
+  // Allow contains/variants matching for the dropdown
+  const lc = s.toLowerCase();
+  if (lc.includes('google news'))         return 'Google News — Arizona Cardinals';
+  if (lc.includes('yahoo') && lc.includes('cardinals')) return 'Yahoo Sports — Cardinals';
+  if (lc.includes('espn'))                return 'ESPN — Cardinals';
+  if (lc.includes('azcardinals.com'))     return 'azcardinals.com';
+  if (lc.includes('arizonasports'))       return 'Arizona Sports';
+  if (lc.includes('cards wire') || lc.includes('usatoday')) return 'USA Today — Cards Wire';
+  if (lc.includes('revenge of the birds')) return 'Revenge of the Birds';
+  if (lc.includes('the athletic'))        return 'The Athletic';
+  if (lc.includes('profootballtalk'))     return 'ProFootballTalk';
+  return s;
+}
+
+function render(){
   const pick = sel.value;
-  let items = ALL;
+  let items = allItems.map(it => ({ ...it, _srcNorm: normalizeSource(it.source || '') }));
 
   if (pick && pick !== 'All sources') {
-    const key = pick.toLowerCase();
-    items = items.filter(it => (it.source || '').toLowerCase() === key);
+    items = items.filter(it => it._srcNorm.toLowerCase() === pick.toLowerCase());
   }
 
-  // sort newest-first
   items.sort((a,b) => {
-    const da = parseDate(a.isoDate || a.date || a.pubDate);
-    const db = parseDate(b.isoDate || b.date || b.pubDate);
-    return (db?.getTime() ?? 0) - (da?.getTime() ?? 0);
+    const da = parseDate(a.isoDate || a.date || a.pubDate) ?? 0;
+    const db = parseDate(b.isoDate || b.date || b.pubDate) ?? 0;
+    return db - da;
   });
 
   items = items.slice(0, 50);
 
-  // updated banner = newest item date
   const newest = items.find(it => parseDate(it.isoDate || it.date || it.pubDate));
-  updatedEl.textContent = newest ? fmtLocal(parseDate(newest.isoDate || newest.date || newest.pubDate)) : '—';
+  updatedEl.textContent = newest ? formatLocal(parseDate(newest.isoDate || newest.date || newest.pubDate)) : '—';
 
-  // cards
   feedEl.innerHTML = '';
   for (const it of items) {
+    const dt = parseDate(it.isoDate || it.date || it.pubDate);
+
     const card = document.createElement('article');
     card.className = 'card';
 
     const h3 = document.createElement('h3');
     h3.className = 'item-title';
-
     const a = document.createElement('a');
     a.href = it.link;
     a.target = '_blank';
@@ -97,17 +112,13 @@ function render() {
 
     const meta = document.createElement('div');
     meta.className = 'meta';
-
     const src = document.createElement('span');
-    src.textContent = it.source || '—';
-
+    src.textContent = normalizeSource(it.source || '—');
     const dot = document.createElement('span');
-    dot.textContent = ' • ';
-
+    dot.textContent = '•';
     const when = document.createElement('time');
-    const dt = parseDate(it.isoDate || it.date || it.pubDate);
-    if (dt) when.dateTime = dt.toISOString();
-    when.textContent = dt ? fmtLocal(dt) : '—';
+    when.dateTime = dt ? dt.toISOString() : '';
+    when.textContent = dt ? formatLocal(dt) : '—';
 
     meta.append(src, dot, when);
     card.append(h3, meta);
@@ -116,34 +127,14 @@ function render() {
 }
 
 /* Init */
-(async function () {
+(async function(){
   try {
-    ALL = await loadItems();
-  } catch (err) {
-    console.error('Failed to load items.json', err);
-    ALL = [];
+    allItems = await loadItems();
+  } catch (e) {
+    console.error('Failed to load items.json', e);
+    allItems = [];
   }
   render();
 })();
-sel.addEventListener('change', render);
 
-/* Song: play/pause toggle (iOS requires tap and silent off) */
-songBtn?.addEventListener('click', async () => {
-  try {
-    if (fightAudio.paused) {
-      await fightAudio.play();
-      songBtn.setAttribute('aria-pressed', 'true');
-      songBtn.querySelector('.pill__icon').textContent = '❚❚';
-      songBtn.lastElementChild.textContent = 'Pause';
-    } else {
-      fightAudio.pause();
-      fightAudio.currentTime = 0;
-      songBtn.setAttribute('aria-pressed', 'false');
-      songBtn.querySelector('.pill__icon').textContent = '►';
-      songBtn.lastElementChild.textContent = 'Team Song';
-    }
-  } catch (e) {
-    alert('Could not play audio. On iPhone, ensure Silent Mode is off and tap again. Also verify static/fight-song.mp3 exists.');
-    console.warn(e);
-  }
-});
+sel.addEventListener('change', render);
