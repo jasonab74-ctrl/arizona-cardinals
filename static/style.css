@@ -1,100 +1,77 @@
-/* ====== Base / Reset ====== */
-* { box-sizing: border-box; }
+/* ---------- Base ---------- */
 :root{
-  --bg: #0b0b0c;               /* near black */
-  --surface: #151518;
-  --card: #1f1f24;
-  --card-border: #3b3b45;
-  --text: #f3f3f3;
-  --muted: #c7c7cc;
-  --brand: #97233f;            /* Cardinals red */
-  --brand-2: #ffb612;          /* accent (gold) */
-  --pill-bg: #2a2a2f;          /* dark pill background */
-  --pill-fg: #f3f3f3;
-  --article-bg: #d9c5a4;       /* light gold card like Purdue site */
-  --article-fg: #1a1a1a;
-}
-html, body { height: 100%; }
-body{
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  /* Cardinals colors */
+  --cards-red: #97233F;       /* primary cardinal red */
+  --cards-red-dark: #5f1626;  /* deeper red for gradient */
+  --cards-gold: #FFB612;      /* accent (sparingly) */
+  --ink: #F5F5F5;             /* light text on dark */
+  --bg: #0f0f10;              /* app background */
+  --pill-bg: #242426;         /* pill buttons */
+  --pill-fg: #efefef;
+  --pill-border: #3a3a3c;
+  --card-bg: #e8d9c7;         /* neutral “sand” cards like your Purdue look */
+  --card-ink: #1c1c1e;
+  --muted: #b0b0b2;
+  --shadow: rgba(0,0,0,.35);
 }
 
-/* ====== Header / Brand ====== */
-.site-header{
-  padding: clamp(14px, 2.8vw, 26px) clamp(14px, 3.6vw, 36px);
-  background: linear-gradient(180deg, #a7384f 0%, var(--brand) 55%, #5a1423 100%);
-  border-bottom: 1px solid #4a1320;
-}
-.brand{
-  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-}
-.brand__logo{
-  width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 0 rgba(0,0,0,0));
-}
-.brand__text{ display:flex; flex-direction:column; gap:4px; }
-.brand__title{
-  margin:0; font-weight:800; letter-spacing:.2px;
-  font-size: clamp(22px, 3.2vw, 34px);
-}
-.brand__dash{ opacity:.7; padding: 0 .25ch; }
-.brand__subtitle{ font-weight:700; opacity:.95; }
-.brand__tagline{ margin:.25rem 0 0; color: var(--muted); }
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; }
+a{ color:inherit; text-decoration:none; }
+a:focus-visible, .select:focus{ outline:2px solid var(--cards-gold); outline-offset:3px; }
 
-/* ====== Pills ====== */
-.pill-nav{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+/* ---------- Hero ---------- */
+.hero{
+  padding:18px 18px 14px;
+  background: linear-gradient(180deg, var(--cards-red) 0%, var(--cards-red-dark) 100%);
+  border-bottom:1px solid #000;
+}
+.hero__brand{ display:flex; gap:14px; align-items:center; }
+.hero__logo{ width:48px; height:48px; border-radius:8px; background:#00000026; object-fit:contain; }
+.hero__title{ display:flex; flex-direction:column; gap:4px; }
+.hero__h1{ margin:0; font-weight:800; line-height:1.05; font-size:2rem; letter-spacing:.2px; }
+.hero__tag{ margin:0; color:#ffffffd0; font-size:.95rem; }
+
+/* ---------- Layout ---------- */
+.container{ max-width:1100px; margin:0 auto; padding:16px; }
+.links{ display:flex; flex-wrap:wrap; gap:14px; margin:10px 0 12px; }
+
+/* Pills */
 .pill{
-  display:inline-flex; align-items:center; gap:.6ch;
-  padding:10px 16px; border-radius:999px; text-decoration:none;
-  background: var(--pill-bg); color: var(--pill-fg); font-weight:700;
-  box-shadow: inset 0 -1px 0 rgba(255,255,255,.06), 0 1px 0 rgba(0,0,0,.4);
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:44px; padding:10px 18px; border-radius:26px;
+  background:var(--pill-bg); color:var(--pill-fg);
+  border:1px solid var(--pill-border); box-shadow:0 1px 0 #000 inset;
+  font-weight:600; letter-spacing:.2px; text-align:center;
 }
-.pill:active { transform: translateY(1px); }
 
-/* ====== Controls ====== */
-.content{ padding: 18px clamp(14px, 3.6vw, 36px) 40px; }
-.controls{
-  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-  padding: 10px 0 18px; border-bottom:1px solid #2b2b33;
-}
-.control-label{ font-weight:700; }
+/* Source bar */
+.bar{ display:flex; gap:16px; align-items:center; justify-content:space-between; border-top:1px solid #1d1d1f; border-bottom:1px solid #1d1d1f; padding:12px 0; margin:8px 0 14px; }
+.bar__left, .bar__right{ display:flex; gap:10px; align-items:center; }
+.lbl{ color:#d8d8da; }
 .select{
-  background: var(--surface); color: var(--text);
-  border: 1px solid #34343d; border-radius:12px; padding:10px 14px; font-weight:600;
+  background:#111; color:#f1f1f1; border:1px solid var(--pill-border);
+  border-radius:12px; padding:10px 12px; min-width:220px;
 }
-.updated{ margin-left:auto; display:flex; gap:8px; align-items:center; color:var(--muted); }
-.updated__label{ opacity:.8; }
 
-/* ====== Feed ====== */
-.feed{ display:flex; flex-direction:column; gap:14px; margin-top:18px; }
+/* Feed cards */
+.feed{ display:flex; flex-direction:column; gap:14px; }
 .card{
-  background: var(--article-bg);
-  color: var(--article-fg);
-  border-radius:14px;
-  padding:16px 18px;
-  border: 2px solid #000000;
-  box-shadow: 0 2px 0 rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.28);
+  background:var(--card-bg); color:var(--card-ink);
+  border-radius:14px; padding:16px 18px; box-shadow:0 3px 10px var(--shadow);
 }
-.item-title{
-  margin:0 0 8px 0; font-size: clamp(16px, 2.2vw, 20px); font-weight:800;
-}
-.item-title a{
-  color: inherit; text-decoration: none;   /* NO underlines */
-}
-.item-title a:hover{ text-decoration: underline; }
-.meta{
-  display:flex; align-items:center; gap:8px; color:#332b20; font-weight:700;
-}
-.meta time{ font-variant-numeric: tabular-nums; }
+.item-title{ margin:0 0 8px; font-size:1.1rem; font-weight:800; letter-spacing:.15px; }
+.item-title a{ text-decoration:none; }
+.item-title a:hover{ text-decoration:underline; }
+.meta{ display:flex; align-items:center; gap:10px; color:#3a3027; font-weight:600; }
+.dot{ opacity:.7; }
 
-/* ====== Footer ====== */
-.site-footer{ margin-top:28px; display:flex; justify-content:center; }
-.repo-link{ color: var(--muted); text-decoration:none; }
-.repo-link:hover{ text-decoration:underline; }
+/* Footer */
+.foot{ text-align:center; color:var(--muted); font-size:.9rem; padding:40px 0 28px; }
+.foot a{ color:var(--muted); }
 
-/* ====== Responsive tweaks ====== */
-@media (max-width:560px){
-  .updated{ width:100%; justify-content:flex-start; margin-left:0; }
+/* ---------- Responsive ---------- */
+@media (min-width:800px){
+  .hero__h1{ font-size:2.4rem; }
+  .item-title{ font-size:1.15rem; }
 }
