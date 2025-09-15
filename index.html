@@ -4,123 +4,135 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Arizona Cardinals — NFL</title>
+  <link rel="icon" href="static/logo.png" />
 
-  <!-- Theme (Cardinals) -->
+  <!-- Theme: Arizona Cardinals (cardinal red + black, neutral cards) -->
   <style>
     :root{
-      --bg:#0f0f10;               /* page background (near black) */
-      --panel:#17181A;            /* header/background panels */
-      --accent:#97233F;           /* Cardinals red */
-      --accent-2:#B3995D;         /* gold accent (subtle) */
-      --card:#D8C3A5;             /* warm card fill, readable in dark UI */
-      --text:#EDEDED;             /* primary text */
-      --muted:#B8B8B8;            /* secondary text */
-      --pill-bg:#282A2E;          /* button/pill bg */
-      --pill-text:#F2F2F2;
-      --link:#111;                /* title link text (we style as non-underlined) */
+      --brand: #97233F;      /* Cardinals red */
+      --brand-dk:#6f1930;    /* darker red for focus/hover */
+      --ink:   #f7f7f7;      /* light text on dark */
+      --bg:    #0f0f10;      /* page background */
+      --muted: #b9b9b9;      /* subtle text */
+      --chip:  #1d1d1f;      /* chip background */
+      --chip-ink:#f1f1f1;
+      --card:  #E6D3B5;      /* same parchment cards you liked */
+      --card-ink:#171717;
+      --rule:  #3a3a3a;
+      --focus: #ffb612;      /* small accent (beak gold) */
     }
-    *{ box-sizing:border-box; }
-    html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, system-ui, "Apple Color Emoji","Segoe UI Emoji"; }
-    a{ color:var(--link); text-decoration:none; }
-    a:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-    header{
-      background:linear-gradient(180deg, var(--panel), rgba(23,24,26,0.5) 70%);
-      border-bottom:1px solid rgba(255,255,255,.06);
-      padding:24px 20px 12px;
-    }
-    .brand-row{ display:flex; align-items:center; gap:14px; }
-    .logo{ width:36px; height:36px; object-fit:contain; filter: drop-shadow(0 1px 0 rgba(0,0,0,.25)); }
-    .title{
-      font-size: clamp(22px, 3.5vw, 32px);
-      line-height:1.1;
-      font-weight:800;
-    }
-    .subtitle{ color:var(--muted); margin-top:6px; font-size:14px; }
 
-    .toolbar{ padding:10px 16px 0; display:flex; flex-wrap:wrap; gap:10px; }
+    /* base */
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* container */
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+
+    /* header */
+    .mast{
+      display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;
+      padding:18px 16px;border-radius:16px;background:linear-gradient(180deg,var(--brand),#3a0f1d 75%);
+      border:1px solid rgba(255,255,255,.06); box-shadow:0 8px 30px rgba(0,0,0,.35);
+    }
+    .brand{
+      display:flex;gap:14px;align-items:center
+    }
+    .brand__logo{width:44px;height:44px;border-radius:10px;background:#000 url(static/logo.png) center/cover no-repeat;border:1px solid rgba(255,255,255,.12)}
+    .brand__title{
+      font-weight:800;letter-spacing:.2px
+    }
+    .brand__title .big{display:block;font-size:clamp(24px,4.2vw,30px)}
+    .brand__title .sub{display:block;opacity:.85;margin-top:2px}
     .pill{
-      background:var(--pill-bg);
-      color:var(--pill-text);
-      border:none;
-      padding:10px 16px;
-      border-radius:24px;
-      font-weight:700;
-      cursor:pointer;
-      text-decoration:none;
-      display:inline-flex; align-items:center; gap:8px;
+      display:inline-flex;align-items:center;gap:.6rem;padding:.55rem .95rem;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;
+      border:1px solid rgba(255,255,255,.14);
     }
 
-    main{ padding:14px 16px 32px; }
+    /* nav links */
+    .links{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 10px}
+    .chip{
+      background:var(--chip); color:var(--chip-ink); padding:.6rem .95rem;border-radius:24px;
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .chip:focus,.chip:hover{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(151,35,63,.35)}
 
-    .row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:8px 0 16px; }
-    label{ font-weight:800; font-size:18px; }
-
+    /* filter row */
+    .toolbar{
+      display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin:10px 0 18px;padding-top:10px;border-top:1px solid var(--rule)
+    }
+    label{font-weight:700}
     select{
-      background:#0b0c0d;
-      color:var(--text);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:14px;
-      padding:10px 14px;
-      font-size:16px;
+      width:100%;appearance:none;background:#121214;color:#f4f4f4;border:1px solid #2a2a2c;
+      border-radius:12px;padding:.8rem 2.5rem .8rem .9rem;
+      background-image:linear-gradient(45deg,transparent 50%, #aaa 50%),linear-gradient(135deg,#aaa 50%,transparent 50%),linear-gradient(to right, #2a2a2c,#2a2a2c);
+      background-position:calc(100% - 18px) calc(1.08rem), calc(100% - 12px) calc(1.08rem), 100% 0;
+      background-size:6px 6px, 6px 6px, 2.5rem 3rem;background-repeat:no-repeat;
     }
+    .updated{justify-self:end;color:var(--muted)}
 
-    .updated{ color:var(--muted); font-size:14px; margin-left:auto; }
-
+    /* feed */
+    #feed{display:flex;flex-direction:column;gap:14px;margin-top:6px}
     .card{
-      background:var(--card);
-      color:#111;
-      border-radius:18px;
-      padding:18px 18px 16px;
-      margin:0 0 14px 0;
-      box-shadow: 0 0 0 2px rgba(0,0,0,.08) inset, 0 1px 0 rgba(255,255,255,.25);
+      background:var(--card);color:var(--card-ink);
+      border-radius:16px;padding:18px 16px;border:1px solid rgba(0,0,0,.08);
+      box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25);
     }
-    .item-title{ margin:0 0 10px 0; font-size:18px; line-height:1.25; font-weight:800; }
-    .item-title a{ color:#111; text-decoration:none; }
-    .meta{ display:flex; align-items:center; gap:8px; color:#3b3b3b; font-size:14px; }
-    .dot::before{ content:"•"; opacity:.55; }
-
-    @media (min-width:860px){
-      .toolbar{ padding:12px 24px 0; }
-      header{ padding:28px 24px 14px; }
-      main   { padding:16px 24px 48px; }
+    .item-title{font-size:1.1rem;margin:0 0 .35rem;font-weight:800}
+    .item-title a{border-bottom:2px solid transparent}
+    .item-title a:hover{border-color:var(--brand-dk)}
+    .meta{color:#333;display:flex;gap:.5rem;align-items:center;font-weight:600}
+    .meta .dot{opacity:.7}
+    @media (max-width:540px){
+      .links{gap:10px}
+      .chip{padding:.55rem .85rem}
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="brand-row">
-      <!-- Use your existing logo path; fallback alt text is fine -->
-      <img class="logo" src="static/logo.png" alt="Arizona Cardinals logo" />
-      <div class="title">Arizona Cardinals — NFL</div>
-    </div>
-    <div class="subtitle">Live team feed · auto-updates</div>
+  <div class="wrap">
+    <header class="mast" role="banner">
+      <div class="brand">
+        <div class="brand__logo" aria-hidden="true"></div>
+        <div class="brand__title">
+          <span class="big">Arizona Cardinals</span>
+          <span class="sub">Live team feed · auto-updates</span>
+        </div>
+      </div>
+      <div></div>
+      <a class="pill" href="https://www.azcardinals.com/" target="_blank" rel="noopener">
+        <span>Team Site</span>
+      </a>
+    </header>
 
-    <!-- Quick links row (keep whatever you already had) -->
-    <nav class="toolbar" aria-label="Quick links">
-      <a class="pill" href="https://www.azcardinals.com/schedule" target="_blank" rel="noopener">Schedule</a>
-      <a class="pill" href="https://www.azcardinals.com/team/players-roster/" target="_blank" rel="noopener">Roster</a>
-      <a class="pill" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals" target="_blank" rel="noopener">ESPN Team</a>
-      <a class="pill" href="https://sports.yahoo.com/nfl/teams/ari/" target="_blank" rel="noopener">Yahoo Team</a>
-      <a class="pill" href="https://www.pff.com/nfl/teams/arizona-cardinals" target="_blank" rel="noopener">PFF Team Page</a>
-      <a class="pill" href="https://www.pro-football-reference.com/teams/crd/" target="_blank" rel="noopener">Pro-Football-Reference</a>
-      <a class="pill" href="https://www.azcentral.com/sports/cardinals/" target="_blank" rel="noopener">AZ Central</a>
-      <a class="pill" href="https://cardswire.usatoday.com/" target="_blank" rel="noopener">Cards Wire</a>
-      <a class="pill" href="https://www.revengeofthebirds.com/" target="_blank" rel="noopener">Revenge of the Birds</a>
+    <!-- quick links (unchanged layout) -->
+    <nav class="links" aria-label="Quick links">
+      <a class="chip" href="https://www.azcardinals.com/schedule/" target="_blank" rel="noopener">Schedule</a>
+      <a class="chip" href="https://www.azcardinals.com/team/players-roster/" target="_blank" rel="noopener">Roster</a>
+      <a class="chip" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals" target="_blank" rel="noopener">ESPN Team</a>
+      <a class="chip" href="https://sports.yahoo.com/nfl/teams/ari/" target="_blank" rel="noopener">Yahoo Team</a>
+      <a class="chip" href="https://www.pff.com/nfl/teams/arizona-cardinals" target="_blank" rel="noopener">PFF Team Page</a>
+      <a class="chip" href="https://www.pro-football-reference.com/teams/crd/" target="_blank" rel="noopener">Pro-Football-Reference</a>
+      <a class="chip" href="https://cardswire.usatoday.com/" target="_blank" rel="noopener">Cards Wire</a>
+      <a class="chip" href="https://www.azcentral.com/sports/cardinals/" target="_blank" rel="noopener">AZ Central</a>
+      <a class="chip" href="https://www.revengeofthebirds.com/" target="_blank" rel="noopener">Revenge of the Birds</a>
     </nav>
-  </header>
 
-  <main>
-    <div class="row">
-      <label for="sourceSelect">Source:</label>
-      <select id="sourceSelect" aria-label="Source filter"></select>
+    <!-- filter + updated -->
+    <div class="toolbar">
+      <div>
+        <label for="sourceSelect">Source:</label>
+        <select id="sourceSelect" aria-label="Choose source"></select>
+      </div>
       <div class="updated">Updated: <span id="updatedAt">—</span></div>
     </div>
 
-    <section id="feed" aria-live="polite"></section>
-  </main>
+    <main id="feed" aria-live="polite"></main>
+  </div>
 
-  <!-- App -->
-  <script src="static/app.js?v=4"></script>
+  <!-- App logic (v2 for cache-bust) -->
+  <script src="static/app.js?v=2"></script>
 </body>
 </html>
