@@ -3,176 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Arizona Cardinals — News</title>
-
-  <!-- PWA / Icons -->
-  <link rel="icon" href="static/favicon.ico">
-  <link rel="apple-touch-icon" href="static/apple-touch-icon.png">
-  <link rel="manifest" href="static/manifest.webmanifest">
-
-  <link rel="preload" href="static/style.css" as="style">
+  <title>Arizona Cardinals — News Feed</title>
+  <link rel="icon" href="static/favicon.png">
   <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
-
-<header class="hero hero-cardinals">
-  <div class="hero__brand">
-    <img class="hero__logo" src="static/logo.png" alt="Arizona Cardinals logo" width="72" height="72">
-    <div class="hero__titles">
-      <h1>Arizona Cardinals — <span class="nowrap">News</span></h1>
-      <p class="subtitle">Live feed • auto-updates</p>
+  <header class="hero">
+    <div class="brand">
+      <img src="static/logo.png" alt="Arizona Cardinals logo" class="brand__logo">
+      <div class="brand__text">
+        <h1 class="brand__title">Arizona Cardinals</h1>
+        <p class="brand__subtitle">Live team feed · auto-updates</p>
+      </div>
     </div>
-  </div>
-</header>
 
-<main class="container">
-  <!-- QUICK-LINK BUTTONS -->
-  <section class="buttons" id="buttons"></section>
+    <button id="songBtn" class="pill" aria-pressed="false">
+      <span class="pill__icon">►</span>
+      <span>Team Song</span>
+    </button>
+    <audio id="fightAudio" preload="none" src="static/fight-song.mp3"></audio>
+  </header>
 
-  <!-- Controls -->
-  <section class="controls">
-    <label class="control">
-      <span>Source:</span>
-      <select id="sourceSelect"></select>
-    </label>
+  <!-- Top link pills (kept for look/feel – update hrefs in your repo as you like) -->
+  <nav class="nav">
+    <a class="pill" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals" target="_blank" rel="noopener">ESPN Team</a>
+    <a class="pill" href="https://sports.yahoo.com/nfl/teams/ari/" target="_blank" rel="noopener">Yahoo Team</a>
+    <a class="pill" href="https://www.pff.com/nfl/teams/arizona-cardinals" target="_blank" rel="noopener">PFF Team Page</a>
+    <a class="pill" href="https://www.pro-football-reference.com/teams/crd/" target="_blank" rel="noopener">Pro-Football-Reference</a>
+  </nav>
+
+  <section class="toolbar">
+    <label for="sourceSelect" class="label">Source:</label>
+    <select id="sourceSelect" class="select"></select>
+
     <div class="updated">
-      <span>Updated:</span>
-      <time id="updatedAt">—</time>
+      <span class="updated__label">Updated:</span>
+      <span id="updatedAt">—</span>
     </div>
   </section>
 
-  <!-- Articles -->
-  <section id="feed" class="feed" aria-live="polite">
-    <div class="empty" id="emptyMsg">No articles yet — the collector will populate shortly.</div>
-  </section>
-</main>
+  <main id="feed" class="feed" aria-live="polite"></main>
 
-<footer class="footer">
-  <a href="https://github.com/" rel="noopener">Powered by GitHub Pages</a>
-</footer>
-
-<script>
-/* ---------- TEAM CONFIG ---------- */
-const TEAM = {
-  slug: "arizona-cardinals",
-  primary: "#97233F",   // Cardinals red (header)
-  primaryDark: "#6f1a2d"
-};
-
-// Quick-link buttons (same spirit as Colts/Eagles)
-const BUTTONS = [
-  ["Schedule", "https://www.azcardinals.com/schedule/"],
-  ["Roster", "https://www.azcardinals.com/team/players-roster/"],
-  ["Depth Chart", "https://www.azcardinals.com/team/depth-chart/"],
-  ["Injury Report", "https://www.azcardinals.com/team/injury-report/"],
-  ["Tickets", "https://www.azcardinals.com/tickets/"],
-  ["Team Shop", "https://shop.azcardinals.com/"],
-  ["Reddit", "https://www.reddit.com/r/ArizonaCardinals/"],
-  ["Bleacher Report", "https://bleacherreport.com/arizona-cardinals"],
-  ["ESPN Team", "https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals"],
-  ["Yahoo Team", "https://sports.yahoo.com/nfl/teams/arizona/"],
-  ["PFF Team Page", "https://www.pff.com/nfl/teams/arizona-cardinals"],
-  ["Pro-Football-Reference", "https://www.pro-football-reference.com/teams/crd/"],
-  ["NFL Power Rankings", "https://www.nfl.com/news/power-rankings"],
-  ["Stats", "https://www.espn.com/nfl/team/stats/_/name/ari/arizona-cardinals"],
-  ["Standings", "https://www.nfl.com/standings/league/2025/REG"]
-];
-
-/* ---------- UI PAINT ---------- */
-document.querySelector(".hero").style.setProperty("--hero", TEAM.primary);
-document.querySelector(".hero").style.setProperty("--hero-dark", TEAM.primaryDark);
-
-const buttonsEl = document.getElementById("buttons");
-buttonsEl.innerHTML = BUTTONS.map(([label, href]) => (
-  `<a class="pill" href="${href}" target="_blank" rel="noopener">${label}</a>`
-)).join("");
-
-/* ---------- DATA / FEED ---------- */
-const sourceSelect = document.getElementById("sourceSelect");
-const updatedAtEl   = document.getElementById("updatedAt");
-const feedEl        = document.getElementById("feed");
-const emptyMsgEl    = document.getElementById("emptyMsg");
-
-let allItems = [];
-let sources = [];
-
-function fmtDate(iso) {
-  // Guard against weird/invalid timestamps
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  // Example: Sep 7, 2025, 4:34 PM
-  return d.toLocaleString(undefined, {
-    month: "short", day: "numeric", year: "numeric",
-    hour: "numeric", minute: "2-digit"
-  });
-}
-
-function render() {
-  const filter = sourceSelect.value || "All sources";
-  const items = allItems
-    .filter(it => filter === "All sources" || it.source === filter)
-    .slice(0, 50); // safety cap
-
-  feedEl.innerHTML = items.map(it => {
-    const when = fmtDate(it.date);
-    const meta = [
-      it.source || new URL(it.link).hostname.replace(/^www\./, ""),
-      when ? `• ${when}` : ""
-    ].filter(Boolean).join(" ");
-    return `
-      <article class="card">
-        <a class="card__link" href="${it.link}" target="_blank" rel="noopener">
-          <h3 class="card__title">${it.title}</h3>
-          <div class="card__meta">${meta}</div>
-        </a>
-      </article>
-    `;
-  }).join("");
-
-  emptyMsgEl.style.display = items.length ? "none" : "block";
-}
-
-function populateSources() {
-  const options = ["All sources", ...sources].map(s => `<option>${s}</option>`).join("");
-  sourceSelect.innerHTML = options;
-  sourceSelect.value = "All sources";
-}
-
-async function load() {
-  try {
-    const res = await fetch("items.json", { cache: "no-store" });
-    const data = await res.json();
-
-    allItems = (data.items || []).map(it => ({
-      title: it.title || "(untitled)",
-      link:  it.link,
-      source: it.source || (it.site || ""),
-      date:  it.date || it.published_at || it.updated_at || ""
-    }));
-
-    // Collect unique sources (stable order)
-    const seen = new Set();
-    sources = [];
-    for (const it of allItems) {
-      const s = it.source || "";
-      if (s && !seen.has(s)) { seen.add(s); sources.push(s); }
-    }
-
-    populateSources();
-    render();
-
-    // Updated timestamp
-    const u = data.updated_at || "";
-    const nice = fmtDate(u);
-    updatedAtEl.textContent = nice || "—";
-  } catch (e) {
-    console.error(e);
-    updatedAtEl.textContent = "—";
-  }
-}
-
-sourceSelect.addEventListener("change", render);
-load();
-</script>
+  <!-- App script (v2.2 keeps dropdown + date fixes). Leave both if you’ve used this pattern elsewhere. -->
+  <script src="static/app.js?v=2.2"></script>
 </body>
 </html>
