@@ -1,142 +1,144 @@
-/* ===== Arizona Cardinals feed app =====
-   Only responsibilities here:
-   - Build the fixed sources dropdown (Cardinals-specific)
-   - Load items.json (always cache-busted)
-   - Render 50 most recent articles with Source · Date
-   - Keep everything else exactly as-is visually
-*/
-
-/* 8–10 stable Cardinals sources for dropdown */
+/* ---------- Cardinals sources (fixed, stable dropdown) ---------- */
 const SOURCES = [
   { key: 'All sources', label: 'All sources' },
+
   { key: 'Google News — Arizona Cardinals', label: 'Google News — Arizona Cardinals' },
-  { key: 'Yahoo Sports — Cardinals',       label: 'Yahoo Sports — Cardinals' },
+  { key: 'Yahoo Sports — Cardinals',        label: 'Yahoo Sports — Cardinals' },
+  { key: 'ESPN — Cardinals',                label: 'ESPN — Cardinals' },
+
   { key: 'azcardinals.com',                 label: 'azcardinals.com' },
   { key: 'Arizona Sports',                  label: 'Arizona Sports' },
   { key: 'USA Today — Cards Wire',          label: 'USA Today — Cards Wire' },
   { key: 'Revenge of the Birds',            label: 'Revenge of the Birds' },
   { key: 'The Athletic',                    label: 'The Athletic' },
-  { key: 'ProFootballTalk',                 label: 'ProFootballTalk' }
+  { key: 'ProFootballTalk',                 label: 'ProFootballTalk' },
 ];
 
-/* DOM */
+/* ---------- DOM ---------- */
 const feedEl    = document.getElementById('feed');
 const sel       = document.getElementById('sourceSelect');
 const updatedEl = document.getElementById('updatedAt');
 
-/* Build dropdown from fixed list (prevents “reverting”) */
-(function buildDropdown(){
+/* ---------- Build dropdown (won’t “disappear”) ---------- */
+(function buildDropdown() {
   sel.innerHTML = '';
-  for (const s of SOURCES){
-    const opt = document.createElement('option');
-    opt.value = s.key;
-    opt.textContent = s.label;
-    sel.appendChild(opt);
+  for (const s of SOURCES) {
+    const o = document.createElement('option');
+    o.value = s.key;
+    o.textContent = s.label;
+    sel.appendChild(o);
   }
   sel.value = 'All sources';
 })();
 
-/* Always cache-bust items.json to avoid stale GH Pages cache */
-async function loadItems(){
+/* ---------- Load items.json with cache-bust to avoid GH cache ---------- */
+async function loadItems() {
   const qs = `?v=${Date.now().toString().slice(0,10)}`;
-  const res = await fetch(`items.json${qs}`, { cache:'no-store' });
-  if (!res.ok) throw new Error(`Failed to load items.json (HTTP ${res.status})`);
+  const res = await fetch(`items.json${qs}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   return Array.isArray(data) ? data : (data.items || []);
 }
 
-/* Robust date parsing */
-function parseDate(any){
-  if (!any) return null;
-  if (any instanceof Date) return any;
-  const s = String(any).replace(/\sat\s/i, ' ');  // “Sep 9, 2025 at 4:04 PM” -> “Sep 9, 2025 4:04 PM”
+/* ---------- Robust date parsing (kills the 1970 bug) ---------- */
+function parseDate(raw) {
+  if (!raw) return null;
+
+  if (raw instanceof Date) return raw;
+
+  let s = String(raw).trim();
+
+  // Common "Sep 9, 2025, 4:31 PM" / "Sep 9, 2025 at 4:31 PM"
+  s = s.replace(/\bat\b/i, ' ').replace(/\s{2,}/g, ' ').trim();
+
+  // Try native Date first
   const t = Date.parse(s);
   if (!Number.isNaN(t)) return new Date(t);
-  try { return new Date(s); } catch { return null; }
+
+  // Fallbacks: RFC822-ish with commas missing
+  // e.g., "Tue, 09 Sep 2025 16:31:00 GMT" or "Sep 9 2025 16:31"
+  const tryFormats = [
+    s.replace(/(\d{1,2})(st|nd|rd|th)/i, '$1'), // strip ordinal
+  ];
+  for (const cand of tryFormats) {
+    const ts = Date.parse(cand);
+    if (!Number.isNaN(ts)) return new Date(ts);
+  }
+  return null; // unknown
 }
 
-/* Format for UI (ex: Sep 9, 2025, 4:04 PM) */
-function fmt(dt){
-  if (!dt) return '—';
-  const d = dt.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
-  const t = dt.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' });
-  return `${d}, ${t}`;
+function fmtDate(d) {
+  // Example: Sep 2, 2025, 7:56 AM
+  const optsD = { year:'numeric', month:'short', day:'numeric' };
+  const optsT = { hour:'numeric', minute:'2-digit' };
+  return `${d.toLocaleDateString(undefined, optsD)}, ${d.toLocaleTimeString(undefined, optsT)}`;
 }
 
+/* ---------- Render ---------- */
 let ALL = [];
 
-/* Render cards */
-function render(){
+function render() {
   const pick = sel.value;
-  let items = ALL;
+  let items = ALL.slice();
 
-  if (pick && pick !== 'All sources'){
+  if (pick && pick !== 'All sources') {
     const key = pick.toLowerCase();
     items = items.filter(it => (it.source || '').toLowerCase() === key);
   }
 
-  // Sort newest first by isoDate/date/pubDate
+  // Sort newest first using isoDate, date, or pubDate
   items.sort((a,b) => {
-    const da = parseDate(a.isoDate || a.date || a.pubDate);
     const db = parseDate(b.isoDate || b.date || b.pubDate);
-    return (db?.getTime() || 0) - (da?.getTime() || 0);
+    const da = parseDate(a.isoDate || a.date || a.pubDate);
+    return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
   });
 
-  // Limit to 50
   items = items.slice(0, 50);
 
-  // Updated timestamp reflects newest article date (fallback to em dash)
+  // Updated stamp = newest date or —
   const newest = items.find(it => parseDate(it.isoDate || it.date || it.pubDate));
-  updatedEl.textContent = newest ? fmt(parseDate(newest.isoDate || newest.date || newest.pubDate)) : '—';
+  updatedEl.textContent = newest ? fmtDate(parseDate(newest.isoDate || newest.date || newest.pubDate)) : '—';
 
-  // Cards
+  // Draw cards
   feedEl.innerHTML = '';
-  for (const it of items){
-    const d = parseDate(it.isoDate || it.date || it.pubDate);
+  for (const it of items) {
+    const when = parseDate(it.isoDate || it.date || it.pubDate);
 
     const card = document.createElement('article');
     card.className = 'card';
 
     const h3 = document.createElement('h3');
     h3.className = 'item-title';
-
     const a = document.createElement('a');
-    a.href = it.link;
-    a.target = '_blank';
-    a.rel   = 'noopener';
+    a.href = it.link; a.target = '_blank'; a.rel = 'noopener';
     a.textContent = it.title || 'Untitled';
-
     h3.appendChild(a);
 
     const meta = document.createElement('div');
     meta.className = 'meta';
-
     const src = document.createElement('span');
     src.textContent = it.source || '—';
+    const dot = document.createElement('span'); dot.className = 'dot'; dot.textContent = '•';
+    const time = document.createElement('time');
+    time.dateTime = when ? when.toISOString() : '';
+    time.textContent = when ? fmtDate(when) : '—';
 
-    const dot = document.createElement('span');
-    dot.className = 'dot';
-
-    const when = document.createElement('time');
-    when.dateTime = d ? d.toISOString() : '';
-    when.textContent = fmt(d);
-
-    meta.append(src, dot, when);
+    meta.append(src, dot, time);
     card.append(h3, meta);
     feedEl.appendChild(card);
   }
 }
 
-/* Init */
-(async function(){
-  try{
+/* ---------- Init ---------- */
+(async function init(){
+  try {
     ALL = await loadItems();
-  }catch(err){
-    console.error(err);
+  } catch (e) {
+    console.warn('Failed to load items.json', e);
     ALL = [];
   }
   render();
 })();
 
-/* Events */
+/* ---------- Events ---------- */
 sel.addEventListener('change', render);
