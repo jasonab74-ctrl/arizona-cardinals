@@ -2,49 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Arizona Cardinals — News Feed</title>
-  <link rel="icon" href="static/favicon.png">
-  <link rel="stylesheet" href="static/style.css">
+  <meta name="description" content="Live team feed · auto-updates" />
+
+  <link rel="icon" href="static/logo.png" />
+  <link rel="apple-touch-icon" href="static/logo.png" />
+  <link rel="stylesheet" href="static/styles.css?v=2.0" />
 </head>
 <body>
-  <header class="hero">
+  <header class="site-header">
     <div class="brand">
-      <img src="static/logo.png" alt="Arizona Cardinals logo" class="brand__logo">
+      <img class="brand__logo" src="static/logo.png" alt="Arizona Cardinals logo" />
       <div class="brand__text">
-        <h1 class="brand__title">Arizona Cardinals</h1>
-        <p class="brand__subtitle">Live team feed · auto-updates</p>
+        <h1 class="brand__title">
+          Arizona Cardinals
+          <span class="brand__dash">—</span>
+          <span class="brand__subtitle">NFL</span>
+        </h1>
+        <p class="brand__tagline">Live team feed · <span>auto-updates</span></p>
       </div>
     </div>
 
-    <button id="songBtn" class="pill" aria-pressed="false">
-      <span class="pill__icon">►</span>
-      <span>Team Song</span>
-    </button>
-    <audio id="fightAudio" preload="none" src="static/fight-song.mp3"></audio>
+    <nav class="pill-nav">
+      <a class="pill" target="_blank" rel="noopener" href="https://www.azcardinals.com/schedule/">Schedule</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://www.azcardinals.com/team/players-roster/">Roster</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://www.azcardinals.com/tickets/">Tickets</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals">ESPN Team</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://sports.yahoo.com/nfl/teams/ari/">Yahoo Team</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://www.pff.com/nfl/teams/arizona-cardinals">PFF Team Page</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://www.pro-football-reference.com/teams/crd/">Pro-Football-Reference</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://cardswire.usatoday.com/team/arizona-cardinals/">USA Today — Cards Wire</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://www.revengeofthebirds.com/">Revenge of the Birds</a>
+      <a class="pill" target="_blank" rel="noopener" href="https://theathletic.com/nfl/team/cardinals/">The Athletic</a>
+    </nav>
   </header>
 
-  <!-- Top link pills (kept for look/feel – update hrefs in your repo as you like) -->
-  <nav class="nav">
-    <a class="pill" href="https://www.espn.com/nfl/team/_/name/ari/arizona-cardinals" target="_blank" rel="noopener">ESPN Team</a>
-    <a class="pill" href="https://sports.yahoo.com/nfl/teams/ari/" target="_blank" rel="noopener">Yahoo Team</a>
-    <a class="pill" href="https://www.pff.com/nfl/teams/arizona-cardinals" target="_blank" rel="noopener">PFF Team Page</a>
-    <a class="pill" href="https://www.pro-football-reference.com/teams/crd/" target="_blank" rel="noopener">Pro-Football-Reference</a>
-  </nav>
+  <main class="content">
+    <section class="controls">
+      <label for="sourceSelect" class="control-label">Source:</label>
+      <select id="sourceSelect" class="select"></select>
 
-  <section class="toolbar">
-    <label for="sourceSelect" class="label">Source:</label>
-    <select id="sourceSelect" class="select"></select>
+      <div class="updated">
+        <span class="updated__label">Updated:</span>
+        <span id="updatedAt" class="updated__time">—</span>
+      </div>
+    </section>
 
-    <div class="updated">
-      <span class="updated__label">Updated:</span>
-      <span id="updatedAt">—</span>
-    </div>
-  </section>
+    <section id="feed" class="feed" aria-live="polite"></section>
 
-  <main id="feed" class="feed" aria-live="polite"></main>
+    <footer class="site-footer">
+      <a class="repo-link" target="_blank" rel="noopener" href="https://jasonab74-ctrl.github.io/">jasonab74-ctrl.github.io</a>
+    </footer>
+  </main>
 
-  <!-- App script (v2.2 keeps dropdown + date fixes). Leave both if you’ve used this pattern elsewhere. -->
-  <script src="static/app.js?v=3.2"></script>
+  <!-- App -->
+  <script src="static/app.js?v=2.0"></script>
 </body>
 </html>
